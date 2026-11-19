@@ -4060,6 +4060,35 @@ function ensureStockRoute() {
   }
   return new Promise((resolve) => {
     let stream, joined = false, playing = false;
+    let membership = null;
+    function setMembership(value) {
+      membership = value;
+      window.dispatchEvent(new Event("room-chat-status"));
+    }
+    async function request(path, body, token) {
+      const headers = {};
+      if (body) headers["Content-Type"] = "application/json";
+      if (token) headers.Authorization = "Bearer " + token;
+      const response = await fetch(quoteOrigin + path, { method: body ? "POST" : "GET", headers, body: body ? JSON.stringify(body) : void 0, cache: "no-store", signal: AbortSignal.timeout(25e3) });
+      const result = await response.json();
+      if (!response.ok) throw Error(result.error ?? "\uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.");
+      return result;
+    }
+    window.hanganggakCommunity = {
+      get connected() {
+        return !!membership;
+      },
+      get name() {
+        return membership?.name;
+      },
+      send(text) {
+        if (!membership) throw Error("\uCC44\uD305\uC744 \uC5F0\uACB0 \uC911\uC774\uC5D0\uC694.");
+        return request("/chat/" + stock.id, { text }, membership.token);
+      },
+      reportStatus: () => request("/reports/status"),
+      reportCode: (email, text) => request("/reports/code", { email, text, room: stock.id }),
+      reportSubmit: (id, code) => request("/reports/submit", { id, code })
+    };
     const timeout = setTimeout(() => {
       if (!joined) {
         close();
@@ -4070,6 +4099,7 @@ function ensureStockRoute() {
     function close() {
       stream?.close();
       stream = null;
+      setMembership(null);
     }
     function publish(selected) {
       window.hanganggakEntryStock = selected;
@@ -4077,7 +4107,17 @@ function ensureStockRoute() {
     }
     function connect() {
       if (stream || document.hidden || joined && !playing) return;
-      stream = new EventSource(quoteOrigin + "/quotes/" + encodeURIComponent(stock.id) + "/events");
+      stream = new EventSource(quoteOrigin + "/quotes/" + encodeURIComponent(stock.id) + "/events" + (playing ? "?room=1" : ""));
+      const source = stream;
+      source.addEventListener("membership", (e) => {
+        if (stream === source && playing) setMembership(JSON.parse(e.data));
+      });
+      source.addEventListener("chat", (e) => {
+        if (stream === source && membership) {
+          const m = JSON.parse(e.data);
+          if (m.room === stock.id) window.dispatchEvent(new CustomEvent("room-chat", { detail: m }));
+        }
+      });
       stream.onmessage = (event) => {
         let quote;
         try {
@@ -4107,6 +4147,8 @@ function ensureStockRoute() {
         if (!playing) close();
       };
       stream.onerror = () => {
+        if (stream !== source) return;
+        setMembership(null);
         const last = window.hanganggakEntryStock;
         if (last) publish({ ...last, quote: { ...last.quote, status: "failed" } });
       };
@@ -4117,7 +4159,7 @@ function ensureStockRoute() {
     });
     window.addEventListener("pagehide", close);
     window.addEventListener("pageshow", connect);
-    document.addEventListener("visibilitychange", () => document.hidden ? close() : connect());
+    document.addEventListener("visibilitychange", () => document.hidden && !playing ? close() : connect());
     connect();
   });
 }

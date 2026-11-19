@@ -82,6 +82,18 @@
 #ux-menu .sound-settings input[type=range]{width:44%;height:38px;accent-color:#9de0bc}
 #ux-menu label[for=review-weather]{display:block;margin-top:10px}
 #review-weather{width:100%;min-height:40px;font:inherit}
+#open-report{width:100%;margin:6px 0}
+#game-report{box-sizing:border-box;width:min(390px,calc(100vw - 24px));max-height:84dvh;overflow:auto;padding:16px;border-radius:16px;border:1px solid #527174;background:#142e34;color:#f1f6f2}
+#game-report::backdrop{background:#061519a0}
+#game-report header{display:flex;align-items:center;justify-content:space-between}
+#game-report h2{margin:0;font:700 18px system-ui}
+#game-report fieldset{border:0;padding:0;margin:0}
+#game-report label:not([hidden]){display:grid;gap:6px;margin-top:12px;font-size:14px}
+#game-report input,#game-report textarea{box-sizing:border-box;width:100%;color:white;background:#203f46;border:1px solid #8ba9a6;border-radius:8px;padding:10px;font:16px system-ui}
+#game-report button{min-height:44px;cursor:pointer}
+#report-close{background:transparent;border:0;color:white;font-size:24px;width:44px}
+#game-report p{font-size:13px;color:#c6d7d4}
+#report-submit{background:#dce9da;color:#162f31;font-weight:700}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -117,11 +129,12 @@
 <button id="sky-notice" type="button" aria-label="비행선 공지 보기" hidden><span aria-hidden="true">✉</span> <span id="sky-text"></span></button>
 <div id="review-dock" hidden>
  <div id="review-emotes" class="review-panel" role="group" aria-label="제스처 선택" hidden></div>
- <section id="review-chat" class="review-panel" aria-label="데모 채팅" hidden>
+ <section id="review-chat" class="review-panel" aria-label="종목방 채팅" hidden>
   <header><strong>메시지</strong><button id="review-chat-close" type="button" aria-label="채팅 닫기">×</button></header>
   <label for="review-channel" class="visually-hidden">메시지 종류</label>
-  <select id="review-channel"><option value="chat">채팅 · 나에게만 표시</option><option value="notice">비행선 공지</option></select>
+  <select id="review-channel"><option value="chat">종목방 채팅</option><option value="notice">비행선 공지</option></select>
   <p id="notice-scope" hidden></p><p id="notice-state" role="status" hidden></p>
+  <p id="room-chat-status" role="status"></p>
   <ul id="review-log" role="log" aria-live="polite"></ul>
   <form id="review-send"><input id="review-message" maxlength="200" aria-label="메시지" placeholder="메시지 입력" enterkeyhint="send"><button>전송</button></form>
  </section>
@@ -130,8 +143,23 @@
 </div>
 <template id="review-preferences">
  <section class="sound-settings" aria-labelledby="sound-title"><h3 id="sound-title">소리</h3></section>
+ <button type="button" id="open-report" aria-haspopup="dialog">개발자에게 제보하기</button>
 </template>
-</main><script type="module">import('../stock-policy.js?v=c086640adffa68f3c7cd008f374395c8fe333176').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=c086640adffa68f3c7cd008f374395c8fe333176'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+<dialog id="game-report" aria-labelledby="report-heading">
+ <header><h2 id="report-heading">개발자에게 제보하기</h2><button type="button" id="report-close" aria-label="제보 닫기">×</button></header>
+ <form id="report-form">
+  <fieldset id="report-draft">
+   <label>답장받을 이메일<input id="report-email" type="email" maxlength="254" autocomplete="email" required></label>
+   <label>어떤 문제가 있었나요?<textarea id="report-text" maxlength="1500" rows="4" required></textarea></label>
+   <p>인증 후 이메일·내용·종목 코드가 개발팀의 비공개 GitHub 이슈에 저장됩니다.</p>
+  </fieldset>
+  <label id="report-verify" hidden>이메일로 받은 6자리 코드<input id="report-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" disabled required></label>
+  <p id="report-state" role="status"></p>
+  <button type="submit" id="report-submit">인증 코드 받기</button>
+  <button type="button" id="report-edit" hidden>다시 입력</button>
+ </form>
+</dialog>
+</main><script type="module">import('../stock-policy.js?v=ad7e0708d5c913f784a5d90f294738c2aa710336').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=ad7e0708d5c913f784a5d90f294738c2aa710336'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
