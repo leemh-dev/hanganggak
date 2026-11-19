@@ -1,6 +1,6 @@
 {
-  "commit": "2cecf2d06e275fd27ac38608c86867a019559933",
-  "builtAt": "2026-11-19T22:51:00.629Z",
+  "commit": "3134bea17e236109fb436f8ec0e84a2136f4d8e4",
+  "builtAt": "2026-11-19T23:02:38.278Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
@@ -85,8 +85,8 @@
     },
     {
       "path": "lounge/policy.json",
-      "bytes": 949,
-      "sha256": "814a32009e488795562f0b06bd4840abe79db243649aecf03f35b65d24a3b816"
+      "bytes": 732,
+      "sha256": "7337bf5ba8d250c7767c75255146b084a8600c426c30c6e6e0f1884b68a75b5f"
     },
     {
       "path": "lounge/river-world.json",
