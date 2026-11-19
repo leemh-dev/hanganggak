@@ -3962,6 +3962,63 @@ function searchStocks(query = "", sort = "cap", stocks = DEMO_STOCKS) {
   });
 }
 
+// demo/beta-quality-completion/stock-search-ui.mjs
+function bindStockSearch({ search: search2, list: list2, status: status2, catalog, select: select2, onInput = () => {
+} }) {
+  const pageSize = 30;
+  let matches = [], shown = 0;
+  function appendResults() {
+    const first = shown;
+    const batch = matches.slice(first, first + pageSize);
+    for (const stock of batch) {
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "stock-row";
+      row.dataset.stock = stock.id;
+      const name = document.createElement("span");
+      name.textContent = stock.name;
+      const detail = document.createElement("small");
+      detail.textContent = stock.id + (stock.type === "ETF" ? " \xB7 ETF" : " \xB7 " + stock.market);
+      if (Number.isFinite(stock.marketCap)) {
+        const cap = stock.marketCap;
+        const amount = cap >= 1e4 ? (cap / 1e4).toLocaleString("ko-KR", { maximumFractionDigits: 2 }) + "\uC870" : cap.toLocaleString("ko-KR") + "\uC5B5";
+        detail.textContent += " \xB7 \uC2DC\uCD1D " + amount + "\uC6D0";
+      }
+      name.append(detail);
+      row.append(name);
+      row.onclick = () => select2(stock);
+      list2.append(row);
+    }
+    shown += batch.length;
+    if (shown < matches.length) {
+      const more = document.createElement("button");
+      more.type = "button";
+      more.className = "stock-row";
+      more.textContent = "\uACB0\uACFC \uB354 \uBCF4\uAE30";
+      more.onclick = () => {
+        more.remove();
+        appendResults();
+      };
+      list2.append(more);
+    }
+    if (first > 0) list2.children[first].focus();
+  }
+  function update() {
+    onInput();
+    list2.replaceChildren();
+    list2.scrollTop = 0;
+    shown = 0;
+    const query = normalizeSearch(search2.value);
+    matches = query ? searchStocks(query, "cap", catalog) : [];
+    list2.hidden = matches.length === 0;
+    status2.textContent = query ? matches.length ? "\uAC80\uC0C9 \uACB0\uACFC " + matches.length.toLocaleString("ko-KR") + "\uAC1C \xB7 \uC2DC\uAC00\uCD1D\uC561 \uB192\uC740 \uC21C" : "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC5B4\uC694." : "";
+    appendResults();
+  }
+  search2.addEventListener("input", update);
+  update();
+  return update;
+}
+
 // demo/beta-quality-completion/stock-route.mjs
 var mapForChange = (change) => Number.isFinite(change) ? change < 0 ? "river" : "lounge" : null;
 function stockURL(stock, gender2 = "male") {
@@ -3978,9 +4035,6 @@ var status = document.querySelector("#selection");
 var gender = new URLSearchParams(location.search).get("gender");
 var female = document.querySelector('[value="female"]');
 if (female && gender === "female") female.checked = true;
-var pageSize = 30;
-var matches = [];
-var shown = 0;
 var chosen = null;
 var cached = null;
 var request;
@@ -4004,57 +4058,6 @@ async function select(stock) {
   } catch {
   }
 }
-function appendResults() {
-  const first = shown;
-  const batch = matches.slice(first, first + pageSize);
-  for (const stock of batch) {
-    const row = document.createElement("button");
-    row.type = "button";
-    row.className = "stock-row";
-    row.dataset.stock = stock.id;
-    const name = document.createElement("span");
-    name.textContent = stock.name;
-    const detail = document.createElement("small");
-    detail.textContent = stock.id + (stock.type === "ETF" ? " \xB7 ETF" : " \xB7 " + stock.market);
-    if (Number.isFinite(stock.marketCap)) {
-      const cap = stock.marketCap;
-      const amount = cap >= 1e4 ? (cap / 1e4).toLocaleString("ko-KR", { maximumFractionDigits: 2 }) + "\uC870" : cap.toLocaleString("ko-KR") + "\uC5B5";
-      detail.textContent += " \xB7 \uC2DC\uCD1D " + amount + "\uC6D0";
-    }
-    name.append(detail);
-    row.append(name);
-    row.onclick = () => select(stock);
-    list.append(row);
-  }
-  shown += batch.length;
-  if (shown < matches.length) {
-    const more = document.createElement("button");
-    more.type = "button";
-    more.className = "stock-row";
-    more.textContent = "\uACB0\uACFC \uB354 \uBCF4\uAE30";
-    more.onclick = () => {
-      more.remove();
-      appendResults();
-    };
-    list.append(more);
-  }
-  if (first > 0) list.children[first].focus();
-}
-function update() {
-  request?.abort();
-  chosen = null;
-  cached = null;
-  enter.disabled = true;
-  list.replaceChildren();
-  list.scrollTop = 0;
-  shown = 0;
-  const query = normalizeSearch(search.value);
-  matches = query ? searchStocks(query, "cap", stock_catalog_default) : [];
-  list.hidden = matches.length === 0;
-  status.textContent = query ? matches.length ? "\uAC80\uC0C9 \uACB0\uACFC " + matches.length.toLocaleString("ko-KR") + "\uAC1C \xB7 \uC2DC\uAC00\uCD1D\uC561 \uB192\uC740 \uC21C" : "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC5B4\uC694." : "";
-  appendResults();
-}
-search.addEventListener("input", update);
 enter.onclick = () => {
   if (!chosen) return;
   const gender2 = document.querySelector('[name="gender"]:checked')?.value ?? null;
@@ -4063,6 +4066,11 @@ enter.onclick = () => {
   const url = stockURL(cached, gender2) ?? "lounge/?" + params;
   if (url) location.assign(url);
 };
-update();
+bindStockSearch({ search, list, status, catalog: stock_catalog_default, select, onInput() {
+  request?.abort();
+  chosen = null;
+  cached = null;
+  enter.disabled = true;
+} });
 var previousStatus = new URLSearchParams(location.search).get("status");
 if (previousStatus) status.textContent = previousStatus === "missing" ? "\uC774 \uC885\uBAA9\uC758 \uB4F1\uB77D\uB960\uC744 \uD655\uC778\uD560 \uC218 \uC5C6\uC5B4\uC694." : "\uC2DC\uC138 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.";

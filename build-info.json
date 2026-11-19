@@ -1,6 +1,6 @@
 {
-  "commit": "bd7726121733d505d66b52dbdf56fd16106820c7",
-  "builtAt": "2026-11-19T23:30:31.157Z",
+  "commit": "c086640adffa68f3c7cd008f374395c8fe333176",
+  "builtAt": "2026-11-19T23:44:21.559Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
@@ -25,8 +25,8 @@
     },
     {
       "path": "river/world.json",
-      "bytes": 24105,
-      "sha256": "7b18a369e9740cbcc41fd12e83bde21c65f88fcd5bb5d2b88b7727234a082036"
+      "bytes": 24165,
+      "sha256": "fb64cbb843d06b52f9049cb4d7b0d6d919db1f8bdb721c2971f2d6aaf235c064"
     },
     {
       "path": "river/policy.json",
@@ -35,8 +35,8 @@
     },
     {
       "path": "river/river-world.json",
-      "bytes": 24105,
-      "sha256": "7b18a369e9740cbcc41fd12e83bde21c65f88fcd5bb5d2b88b7727234a082036"
+      "bytes": 24165,
+      "sha256": "fb64cbb843d06b52f9049cb4d7b0d6d919db1f8bdb721c2971f2d6aaf235c064"
     },
     {
       "path": "river/river-policy.json",
@@ -90,8 +90,8 @@
     },
     {
       "path": "lounge/river-world.json",
-      "bytes": 24105,
-      "sha256": "7b18a369e9740cbcc41fd12e83bde21c65f88fcd5bb5d2b88b7727234a082036"
+      "bytes": 24165,
+      "sha256": "fb64cbb843d06b52f9049cb4d7b0d6d919db1f8bdb721c2971f2d6aaf235c064"
     },
     {
       "path": "lounge/river-policy.json",
