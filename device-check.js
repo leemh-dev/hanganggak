@@ -1,0 +1,7 @@
+// Measures this browser only. Does not upload user/device information to a server.
+(()=>{const start=performance.now(),samples=[];let last=null,ready=null,assetsReady=null,contextLost=0;
+ function frame(t){if(assetsReady===null&&window.mobileUX?.ready())assetsReady=t-start;if(window.daily?.rendered()){if(ready===null)ready=t-start;if(last!==null&&!document.hidden)samples.push(t-last);if(samples.length>600)samples.shift();last=t}else last=null;requestAnimationFrame(frame)}requestAnimationFrame(frame);
+ document.addEventListener('visibilitychange',()=>last=null);document.addEventListener('webglcontextlost',()=>contextLost++,true);
+ function record(){const sorted=[...samples].sort((a,b)=>a-b),mean=samples.length?samples.reduce((a,b)=>a+b)/samples.length:null;return{url:location.pathname,gender:new URLSearchParams(location.search).get('gender'),utc:new Date().toISOString(),userAgent:navigator.userAgent,viewport:[innerWidth,innerHeight],dpr:devicePixelRatio,readyMs:ready,assetsReadyMs:assetsReady,frames:samples.length,meanFrameMs:mean,fps:mean?1000/mean:null,p95FrameMs:sorted[Math.floor(sorted.length*.95)]??null,graphics:ready===null?null:window.bqc?.renderer(),contextLost,softwareFastLoop:ready===null?null:window.daily?.stats().capturePreset.softwareFastLoop,scope:'Actual current browser frame timing; rendering captures and background pauses may affect values. No server sync benchmark.'}}
+ window.deviceReview={record};
+})();
