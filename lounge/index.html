@@ -6,10 +6,28 @@
 #ux-entry{position:fixed;z-index:40;inset:0;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:#10262f55}
 .ux-card{width:min(100%,320px);max-height:calc(100dvh - 48px);overflow:auto;border-radius:22px;background:#142f37f2;border:1px solid #ffffff30;padding:24px;box-shadow:0 16px 60px #001c3f44;text-align:center}
 .ux-card h1{font-size:24px;margin:0 0 10px;line-height:1.3}.ux-card p{word-break:keep-all;font-size:14px;color:#c2d4d5;line-height:1.6;margin:8px 0 18px}.ux-card button{width:100%;font-size:16px;min-height:48px;background:#dce9da;color:#173636;font-weight:700;border:0}.ux-card a{display:inline-block;color:#c8dcda;font-size:13px;padding:12px 0 0}
-#ux-menu{position:fixed;z-index:45;top:calc(max(10px,env(safe-area-inset-top)) + 58px);right:max(12px,env(safe-area-inset-right));width:min(300px,calc(100vw - 24px));max-height:calc(100dvh - 90px - env(safe-area-inset-bottom));overflow:auto;padding:16px;border:1px solid #ffffff30;border-radius:16px;background:#142f37f5;box-shadow:0 12px 50px #00132266}
-#ux-menu h2{font-size:16px;margin:0 0 12px}#ux-menu p{font-size:13px;line-height:1.7;color:#c6d9d8;margin:8px 0}#ux-menu button,#ux-menu a{display:block;min-height:44px;width:100%;font-size:14px;margin:6px 0;padding:10px 12px;text-align:left;border-radius:10px}#ux-menu a{color:#e1ece5;text-decoration:none;background:#26464c}#ux-menu textarea{width:100%;height:90px;font-size:12px}#ux-menu details{border-top:1px solid #ffffff25;margin-top:12px;padding-top:12px}#ux-menu summary{min-height:44px;font-size:14px;padding:10px 0;cursor:pointer}
+#ux-menu-shade{position:fixed;inset:0;z-index:44;background:#06151970}
+#ux-menu{position:fixed;z-index:45;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));width:min(348px,calc(100vw - 24px));max-height:calc(100dvh - 28px - env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;border:1px solid #456064;border-radius:18px;background:#142e34;color:#f1f6f2;box-shadow:0 14px 50px #00132270}
+#ux-menu[hidden],#ux-menu-shade[hidden]{display:none}
+.ux-menu-head{display:flex;align-items:center;justify-content:space-between;flex:none;padding:8px 12px 8px 18px;border-bottom:1px solid #385257}
+#ux-menu h2{font-size:18px;margin:0}
+#ux-menu button,#ux-menu a{font:inherit;color:inherit;cursor:pointer;border:1px solid #527174;border-radius:10px;background:#203f46;min-height:44px;padding:6px 12px}
+#ux-menu #ux-close{width:44px;color:#eff5f1;font-size:26px;border:0;background:transparent}
+.ux-menu-body{overflow:auto;overscroll-behavior:contain;padding:14px 16px max(10px,env(safe-area-inset-bottom));font-size:14px}
+.ux-menu-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#ux-menu a{display:grid;place-items:center;text-decoration:none}
+#ux-menu h3{margin:0 0 4px;font-size:14px;color:#d4e5df}
+#ux-menu details{border-top:1px solid #385257}
+#ux-menu summary{padding:13px 0;min-height:44px;cursor:pointer;font-weight:600}
+#ux-menu details p{margin:0 0 10px;color:#cbdbd8;font-size:13px;line-height:1.55}
+#ux-menu textarea{width:100%;height:88px}
+#ux-menu :focus-visible{outline:2px solid #b4e9ce;outline-offset:1px}
+@media(max-width:600px){
+ #ux-menu{inset:auto 0 0;width:100%;max-height:calc(100dvh - max(20px,env(safe-area-inset-top)));border-radius:18px 18px 0 0}
+ .ux-menu-body{padding-bottom:max(14px,env(safe-area-inset-bottom))}
+}
 #ux-toast{position:fixed;z-index:32;bottom:max(18px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);padding:9px 14px;border-radius:12px;background:#132b32df;color:#eef4ed;font-size:13px;text-align:center;pointer-events:none}
-@media(max-height:480px){.ux-card{padding:16px}.ux-card h1{font-size:20px}.ux-card p{margin:6px 0 12px}#ux-bar strong{padding:8px 12px}#ux-menu{top:66px}}
+@media(max-height:480px){.ux-card{padding:16px}.ux-card h1{font-size:20px}.ux-card p{margin:6px 0 12px}#ux-bar strong{padding:8px 12px}}
 
 #ux-bar strong{display:flex;align-items:baseline;gap:.45em;max-width:calc(100% - 60px);white-space:nowrap}
 #ux-stock-name{overflow:hidden;text-overflow:ellipsis}
@@ -36,18 +54,23 @@
 #review-log{max-height:min(23dvh,150px);overflow:auto;overflow-wrap:anywhere;padding:0;list-style:none}
 #review-log li{padding:5px 8px}#review-send input,#review-time{min-width:0;border-radius:8px;padding:8px;color:#123;background:#f1f4ee;font:16px system-ui}
 #review-send input{flex:1}#review-send button{font-size:14px}
-#ux-menu label[for=review-time]{display:block;margin-top:12px;font-size:14px}#review-time-mode{font-size:12px}
+#review-time-mode{font-size:12px}
 #sky-notice{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 56px);left:max(12px,env(safe-area-inset-left));max-width:min(330px,85vw);min-height:38px;background:#183b40ed;color:#fff2d3;border:1px solid #c9af73;border-radius:10px;text-align:left;font-size:13px;overflow-wrap:anywhere;z-index:30}
 #sky-notice[hidden]{display:none}
 #review-channel{width:100%;min-height:40px;margin:6px 0;background:#23474a;color:white;border:1px solid #54737a;border-radius:8px;padding:5px}
 #review-chat p{margin:4px 0 8px;font-size:13px;color:#d8e8e8}
 #review-chat .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 
-#ux-menu .sound-settings{margin:12px 0}
-#ux-menu .sound-settings summary{padding:8px 0;cursor:pointer}
-#ux-menu .sound-settings div{display:flex;align-items:center;justify-content:space-between;min-height:44px;gap:8px}
-#ux-menu .sound-settings label{display:flex;align-items:center;gap:6px}
-#ux-menu .sound-settings input[type=range]{width:48%}
+#ux-extra-settings section{margin:14px 0 0;padding:12px 0;border-top:1px solid #385257}
+#ux-extra-settings section+section{margin-top:0}
+#ux-menu .sound-settings div,.clock-controls{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#ux-menu .sound-settings label{display:flex;gap:9px;align-items:center;min-height:44px;cursor:pointer}
+.sound-settings input[type=checkbox]{accent-color:#9de0bc;width:20px;height:20px}
+#ux-menu .sound-settings input[type=range]{width:44%;height:38px;accent-color:#9de0bc}
+.clock-controls{flex-wrap:wrap}
+#ux-menu #review-time-mode{margin:0 auto 0 0;color:#c4d9d2;font-size:13px}
+#ux-menu #review-time{min-height:44px;max-width:100%;color-scheme:dark;background:#203f46;color:#f1f6f2;border:1px solid #527174}
+#ux-menu #review-auto:disabled{opacity:.55;cursor:default}
 #ux-menu label[for=review-weather]{display:block;margin-top:10px}
 #review-weather{width:100%;min-height:40px;font:inherit}
 </style></head><body>
@@ -57,7 +80,7 @@
  <button id="toggle-chat" type="button" aria-label="채팅창 열기" aria-expanded="false" aria-controls="social">채팅</button>
  <aside id="social" aria-label="참가자와 채팅" hidden>
  <header><span id="connection" role="status" aria-live="polite">입장 전</span></header>
- <div id="social-body"><div id="identity">게스트 입장 전</div><details><summary>현재 종목 참가자 <span id="population">0 / 20</span></summary><ul id="participants"></ul></details>
+ <div id="social-body"><div id="identity">게스트 입장 전</div><details><summary>현재 종목 참가자 <span id="population">0명</span></summary><ul id="participants"></ul></details>
  <ol id="messages" role="log" aria-label="현재 종목 채팅" aria-live="polite"></ol>
  <form id="chat-form"><input id="chat" aria-label="채팅 메시지" placeholder="메시지 (최대 200자)" maxlength="400" autocomplete="off" enterkeyhint="send" disabled><button id="send-chat" disabled>전송</button></form><small id="chat-notice" role="status"></small></div>
  </aside>
@@ -65,9 +88,19 @@
  <section id="welcome" class="panel" aria-label="라운지 입장 안내"><span class="eyebrow">HANGANGGAK · DEMO</span><h1>어느 종목에서 만날까요?</h1><p>상승은 루프탑, 하락은 한강.<br>같은 종목을 선택한 사람들과 만나고 대화하세요.</p><div id="stock-picker"><label for="stock-search">종목명 또는 종목코드</label><div class="stock-search-row"><input id="stock-search" type="search" role="combobox" aria-autocomplete="list" aria-controls="stock-results" aria-expanded="true" aria-describedby="stock-data-note" placeholder="예: 삼, 삼성 전자, 005930" autocomplete="off" maxlength="60"><button id="clear-stock-search" type="button" aria-label="검색어 지우기">지우기</button></div><label for="stock-sort" class="sort-label">정렬</label><select id="stock-sort"><option value="cap">시가총액 내림차순</option><option value="name">종목명순</option><option value="code">종목코드순</option></select><small id="stock-data-note"></small> <a id="stock-data-source" target="_blank" rel="noopener noreferrer">시총 출처</a><span id="stock-result-count" class="sr-only" role="status" aria-live="polite"></span><ul id="stock-results" role="listbox" aria-label="검색 결과"></ul><p id="stock-empty" hidden>검색 결과가 없습니다. 다른 이름이나 코드를 입력해 주세요.</p><p id="stock-selection" role="status" aria-live="polite"></p></div><p id="demo-disclaimer" class="muted">입장 후 웹에서 수집한 현재가를 표시합니다.<br>시총 정렬은 고정 스냅샷이며, 시세는 지연될 수 있습니다.<br>입장 버튼을 누르면 임시 ID와 닉네임이 발급됩니다.</p><p id="entry-status" role="status" aria-live="polite">종목을 선택해 주세요.</p><p>PC: 바닥 클릭 이동 · 마우스 드래그 시점 · 휠 줌<br>휴대폰: 바닥·수면 탭 이동 · 한 손가락 드래그 시점 · 핀치 줌<br>사다리·다이빙대 직접 선택 · 다이빙대 도착 후 수면 선택</p><p class="muted">세로·가로 화면 모두 이용할 수 있습니다.<br>전체 화면은 버튼으로 언제든 전환할 수 있어요.</p><button id="enter" disabled>불러오는 중…</button></section>
  <section id="guide" class="panel" aria-label="조작 도움말" hidden><h2>공간 둘러보기</h2><p>바닥이나 수면을 클릭하면 그곳으로 이동합니다.<br>마우스 드래그로 시점 · 휠로 거리 조절<br>WASD / 방향키도 보조 조작으로 사용할 수 있습니다.<br>휴대폰은 바닥·수면 탭 이동 · 한 손가락 드래그 / 핀치 줌</p><p>한강: 경사로로 공원과 물을 오갈 수 있습니다.<br>사다리를 클릭·탭하면 자동으로 접근해 올라가거나 내려갑니다.<br>다이빙대를 선택해 도착한 뒤 수면을 누르면 그 방향으로 다이빙합니다.<br>PC는 마우스를 올리면, 휴대폰은 가까이 가면 흰 테두리와 문구가 보입니다.</p><p>↺ 버튼은 시점만 초기화합니다.<br>전체 화면 버튼으로 다시 입장하거나 종료할 수 있습니다.<br>PC는 Esc로 전체 화면을 종료할 수 있습니다.</p><p>시점은 좌우로 360도 돌릴 수 있습니다.<br>난간과 가구 주변에서는 카메라가 가까워집니다.</p><small id="position">위치 —</small><button id="close-help">계속 둘러보기</button></section>
 <div id="ux-stick" aria-label="이동 조이스틱"><span></span></div>
-<header id="ux-bar"><strong id="ux-map-name"><span id="ux-stock-name">한강각</span> <span id="ux-stock-change"></span></strong><button id="ux-menu-toggle" aria-label="메뉴" aria-controls="ux-menu" aria-expanded="false">☰</button></header>
+<header id="ux-bar"><strong id="ux-map-name"><span id="ux-stock-name">한강각</span> <span id="ux-stock-change"></span></strong><button id="ux-menu-toggle" aria-label="게임 설정 열기" aria-controls="ux-menu" aria-expanded="false">☰</button></header>
 <section id="ux-entry" role="dialog" aria-modal="true" aria-labelledby="ux-entry-title"><div class="ux-card"><h1 id="ux-entry-title">잠시만 기다려 주세요</h1><p id="ux-entry-note">공간을 불러오고 있어요.</p><button id="ux-enter" disabled>불러오는 중…</button><a href="../">종목 다시 선택</a></div></section>
-<aside id="ux-menu" aria-label="게임 메뉴" hidden><h2>공간 둘러보기</h2><p>조이스틱 또는 바닥 탭으로 이동<br>소파·벤치를 누르면 앉기<br>앉아서 바닥을 누르면 일어나 이동<br>사다리를 누르면 오르내리기 · 다리 바깥 보행로에서 강 쪽으로 이동하면 낙하<br>드래그로 시점 · 두 손가락으로 줌</p><button id="ux-reset">시점 초기화</button><a href="../">종목 선택</a><label for="review-time">데모 시각 · <span id="review-time-mode">서울 현재 시각</span></label><input type="time" id="review-time"><button id="review-auto">서울 현재 시각으로 복귀</button><details><summary>기기 검사</summary><p id="ux-performance">측정 준비 중</p><button id="ux-copy">기기 기록 복사</button><textarea id="ux-record" readonly aria-label="기기 검사 기록" hidden></textarea></details><button id="ux-close">메뉴 닫기</button></aside>
+<div id="ux-menu-shade" hidden></div>
+<section id="ux-menu" role="dialog" aria-modal="true" aria-labelledby="ux-menu-title" hidden>
+ <header class="ux-menu-head"><h2 id="ux-menu-title">게임 설정</h2><button id="ux-close" type="button" aria-label="설정 닫기">×</button></header>
+ <div class="ux-menu-body">
+  <div class="ux-menu-actions"><button id="ux-reset" type="button">시점 초기화</button><a href="../">종목 선택</a></div>
+  <div id="ux-extra-settings"></div>
+  <details><summary>조작 방법</summary><p>조이스틱이나 바닥 탭으로 이동하고, 화면을 드래그해 둘러보세요. 두 손가락으로 확대할 수 있어요.</p><p>좌석을 누르면 앉고, 바닥을 누르면 일어나요.</p><p id="ux-ladder-help">사다리를 누르면 오르내려요. 다리 바깥 보행로에서 강 쪽으로 나가면 떨어져요.</p></details>
+  
+  <details><summary>기기 검사</summary><p id="ux-performance">측정 준비 중</p><button id="ux-copy">기기 기록 복사</button><textarea id="ux-record" readonly aria-label="기기 검사 기록" hidden></textarea></details>
+ </div>
+</section>
 <div id="ux-toast" role="status" aria-live="polite" hidden></div>
 <button id="sky-notice" type="button" aria-label="비행선 공지 보기" hidden><span aria-hidden="true">✉</span> <span id="sky-text"></span></button>
 <div id="review-dock" hidden>
@@ -83,7 +116,14 @@
  <button id="open-emotes" aria-label="제스처" aria-controls="review-emotes" aria-expanded="false">🙂</button>
  <button id="open-chat" aria-label="채팅" aria-controls="review-chat" aria-expanded="false">💬</button>
 </div>
-</main><script type="module">import('../stock-policy.js?v=3134bea17e236109fb436f8ec0e84a2136f4d8e4').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=3134bea17e236109fb436f8ec0e84a2136f4d8e4'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><script src="../device-check.js" defer></script></body></html>
+<template id="review-preferences">
+ <section class="sound-settings" aria-labelledby="sound-title"><h3 id="sound-title">소리</h3></section>
+ <section class="clock-settings" aria-labelledby="clock-title">
+  <h3 id="clock-title">게임 시각</h3>
+  <div class="clock-controls"><label for="review-time" id="review-time-mode">서울 현재 시각</label><input type="time" id="review-time"><button type="button" id="review-auto">자동 복귀</button></div>
+ </section>
+</template>
+</main><script type="module">import('../stock-policy.js?v=5105735785ca7ac44cf5dbb7ccc9456d5d4306c4').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=5105735785ca7ac44cf5dbb7ccc9456d5d4306c4'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><script src="../device-check.js" defer></script></body></html>
 
 
 
