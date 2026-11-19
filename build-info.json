@@ -1,12 +1,12 @@
 {
-  "commit": "5105735785ca7ac44cf5dbb7ccc9456d5d4306c4",
-  "builtAt": "2026-11-19T23:14:37.474Z",
+  "commit": "bd7726121733d505d66b52dbdf56fd16106820c7",
+  "builtAt": "2026-11-19T23:30:31.157Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
       "path": "river/mobile-world.glb",
-      "bytes": 13263964,
-      "sha256": "d527796f8c36aec72a79a6812eb8e2e66cdc655e32e1e375fbc6c2a2da98538c"
+      "bytes": 12158860,
+      "sha256": "d9506c0ef6b00518eac44b2db819b43b755f12c2b577311f4765f78234f451b7"
     },
     {
       "path": "river/landing.glb",
@@ -65,18 +65,18 @@
     },
     {
       "path": "lounge/mobile-world.glb",
-      "bytes": 25818504,
-      "sha256": "c16b4e9f5e7fac5b2e3caa18044b22294e1833a3f80869e6e25aa39ccf918ea0"
+      "bytes": 23523504,
+      "sha256": "240ffbac7967f7f191e764f0a2bf98c3858149a166bf0dd93b5124302ced2cee"
     },
     {
       "path": "lounge/quality-config.json",
-      "bytes": 2904,
-      "sha256": "ee0259fd5c180e6ce7897b91e85c372c8d74765cdd723cf3590ae77c7221a1f3"
+      "bytes": 2921,
+      "sha256": "eb7a8c42540a5801f0387587f2746edb9311fd44e481e3807c5e76f364a4cbab"
     },
     {
       "path": "lounge/baseline-config.json",
-      "bytes": 135,
-      "sha256": "da4a97d1d4207af6434461c9252324ecb8369ffd88cfcae4c429dd9b99164051"
+      "bytes": 152,
+      "sha256": "9cff2cb8f15ac78fddfa78d460e2c6b1155cca445647840cefe3a036a536f020"
     },
     {
       "path": "lounge/world.json",
