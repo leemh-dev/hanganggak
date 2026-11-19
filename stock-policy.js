@@ -3920,6 +3920,83 @@ var stock_catalog_default = [
   { id: "499790", name: "GS\uD53C\uC564\uC5D8", market: "KOSPI", type: "STOCK", marketCap: 5175 }
 ];
 
+// demo/shared/demo-stocks.mjs
+var MARKET_CAP_SNAPSHOT = Object.freeze({ "asOf": "2026-11-10", "asOfTime": "2026-11-10 15:10+09:00", "unit": "\uC5B5\uC6D0", "sourceUrl": "https://stockgo.kr/market", "sourceLabel": "\uC8FC\uC2DD\uC54C\uB77C\uBBF8 \uC2DC\uAC00\uCD1D\uC561 \uD45C", "fetchedAt": "2026-11-10T06:15:41.669707+00:00" });
+var DEMO_STOCKS = Object.freeze([{ "id": "005930", "name": "\uC0BC\uC131\uC804\uC790", "market": "KOSPI", "change": 1.2, "map": "rooftop", "marketCap": 11669172 }, { "id": "000660", "name": "SK\uD558\uC774\uB2C9\uC2A4", "market": "KOSPI", "change": 2.4, "map": "rooftop", "marketCap": 8933921 }, { "id": "035420", "name": "NAVER", "market": "KOSPI", "change": -1.3, "map": "river", "marketCap": 294330 }, { "id": "009150", "name": "\uC0BC\uC131\uC804\uAE30", "market": "KOSPI", "change": 0.8, "map": "rooftop", "marketCap": 659545 }, { "id": "010140", "name": "\uC0BC\uC131\uC911\uACF5\uC5C5", "market": "KOSPI", "change": -0.7, "map": "river", "marketCap": 144408 }, { "id": "005380", "name": "\uD604\uB300\uCC28", "market": "KOSPI", "change": 1.1, "map": "rooftop", "marketCap": 559532 }, { "id": "000270", "name": "\uAE30\uC544", "market": "KOSPI", "change": -0.6, "map": "river", "marketCap": 375186 }, { "id": "373220", "name": "LG\uC5D0\uB108\uC9C0\uC194\uB8E8\uC158", "market": "KOSPI", "change": 1.5, "map": "rooftop", "marketCap": 776880 }, { "id": "207940", "name": "\uC0BC\uC131\uBC14\uC774\uC624\uB85C\uC9C1\uC2A4", "market": "KOSPI", "change": -1, "map": "river", "marketCap": 678162 }, { "id": "105560", "name": "KB\uAE08\uC735", "market": "KOSPI", "change": 0.4, "map": "rooftop", "marketCap": 541253 }].map((stock) => {
+  const sample = true ? { "000660": 5, "000270": -5 }[stock.id] : void 0;
+  return Object.freeze(sample === void 0 ? stock : { ...stock, change: sample });
+}));
+
+// demo/shared/stock-search.mjs
+var normalizeSearch = (value) => String(value).normalize("NFKC").replace(/\s+/gu, "").toLocaleLowerCase("ko");
+var byCode = (a, b) => a.id.localeCompare(b.id);
+function searchStocks(query = "", sort = "cap", stocks = DEMO_STOCKS) {
+  const q = normalizeSearch(query);
+  return stocks.filter((s) => normalizeSearch(s.name).includes(q) || s.id.toLowerCase().startsWith(q)).sort((a, b) => {
+    if (sort === "code") return byCode(a, b);
+    if (sort === "name") return a.name.localeCompare(b.name, "ko") || byCode(a, b);
+    const cap = (s) => Number.isFinite(s.marketCap) ? s.marketCap : -Infinity;
+    return cap(b) - cap(a) || 0 || byCode(a, b);
+  });
+}
+
+// demo/beta-quality-completion/stock-search-ui.mjs
+function bindStockSearch({ search, list, status, catalog, select, onInput = () => {
+} }) {
+  const pageSize = 30;
+  let matches = [], shown = 0;
+  function appendResults() {
+    const first = shown;
+    const batch = matches.slice(first, first + pageSize);
+    for (const stock of batch) {
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "stock-row";
+      row.dataset.stock = stock.id;
+      const name = document.createElement("span");
+      name.textContent = stock.name;
+      const detail = document.createElement("small");
+      detail.textContent = stock.id + (stock.type === "ETF" ? " \xB7 ETF" : " \xB7 " + stock.market);
+      if (Number.isFinite(stock.marketCap)) {
+        const cap = stock.marketCap;
+        const amount = cap >= 1e4 ? (cap / 1e4).toLocaleString("ko-KR", { maximumFractionDigits: 2 }) + "\uC870" : cap.toLocaleString("ko-KR") + "\uC5B5";
+        detail.textContent += " \xB7 \uC2DC\uCD1D " + amount + "\uC6D0";
+      }
+      name.append(detail);
+      row.append(name);
+      row.onclick = () => select(stock);
+      list.append(row);
+    }
+    shown += batch.length;
+    if (shown < matches.length) {
+      const more = document.createElement("button");
+      more.type = "button";
+      more.className = "stock-row";
+      more.textContent = "\uACB0\uACFC \uB354 \uBCF4\uAE30";
+      more.onclick = () => {
+        more.remove();
+        appendResults();
+      };
+      list.append(more);
+    }
+    if (first > 0) list.children[first].focus();
+  }
+  function update() {
+    onInput();
+    list.replaceChildren();
+    list.scrollTop = 0;
+    shown = 0;
+    const query = normalizeSearch(search.value);
+    matches = query ? searchStocks(query, "cap", catalog) : [];
+    list.hidden = matches.length === 0;
+    status.textContent = query ? matches.length ? "\uAC80\uC0C9 \uACB0\uACFC " + matches.length.toLocaleString("ko-KR") + "\uAC1C \xB7 \uC2DC\uAC00\uCD1D\uC561 \uB192\uC740 \uC21C" : "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC5B4\uC694." : "";
+    appendResults();
+  }
+  search.addEventListener("input", update);
+  update();
+  return update;
+}
+
 // demo/beta-quality-completion/stock-route.mjs
 var mapForChange = (change) => Number.isFinite(change) ? change < 0 ? "river" : "lounge" : null;
 function stockURL(stock, gender = "male") {
@@ -3947,6 +4024,39 @@ function ensureStockRoute() {
   if (!stock) {
     exit();
     return false;
+  }
+  const picker = document.querySelector("#ux-stock-picker");
+  if (picker) {
+    const search = picker.querySelector("input");
+    const reset = bindStockSearch({ search, list: picker.querySelector(".stock-results"), status: picker.querySelector("[role=status]"), catalog: stock_catalog_default, select(item) {
+      if (item.id === stock.id) {
+        picker.close();
+        return;
+      }
+      const next = new URL(location.href);
+      next.searchParams.set("stock", item.id);
+      next.searchParams.set("enter", "1");
+      location.assign(next);
+    } });
+    picker.addEventListener("close", () => {
+      search.value = "";
+      reset();
+      document.querySelector("#ux-map-name")?.focus();
+    });
+    picker.querySelector("button").onclick = () => picker.close();
+    picker.addEventListener("click", (e) => {
+      if (e.target === picker) {
+        const r = picker.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) picker.close();
+      }
+    });
+    picker.addEventListener("keydown", (e) => {
+      e.stopPropagation();
+      if (e.key === "Escape" && !e.isComposing) {
+        e.preventDefault();
+        picker.close();
+      }
+    });
   }
   return new Promise((resolve) => {
     let stream, joined = false, playing = false;
@@ -3984,6 +4094,7 @@ function ensureStockRoute() {
           return;
         }
         const destination = new URL(stockURL(selected, params.get("gender")), home);
+        if (params.get("enter") === "1") destination.searchParams.set("enter", "1");
         if (destination.pathname !== location.pathname) {
           close();
           location.replace(destination);
