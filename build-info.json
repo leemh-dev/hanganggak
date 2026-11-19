@@ -1,7 +1,7 @@
 {
-  "commit": "c5f673c1623ed33c94623cf3b2d003ebf95ffa0d",
-  "builtAt": "2026-11-19T22:22:52.990Z",
-  "kind": "isolated single-player review, no live server or prices",
+  "commit": "91fd94b5f067fad21318b42c04e722627f7b37e9",
+  "builtAt": "2026-11-19T22:45:51.495Z",
+  "kind": "single-player review with public market quote API",
   "files": [
     {
       "path": "river/mobile-world.glb",

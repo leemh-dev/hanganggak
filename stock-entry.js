@@ -3920,13 +3920,34 @@ var stock_catalog_default = [
   { id: "499790", name: "GS\uD53C\uC564\uC5D8", market: "KOSPI", type: "STOCK" }
 ];
 
+// demo/beta-quality-completion/quote-client.mjs
+var quoteOrigin = "https://hanganggak-realtime-demo.onrender.com";
+async function cachedQuote(id, signal) {
+  const response = await fetch(quoteOrigin + "/quotes/" + encodeURIComponent(id), { cache: "no-store", signal });
+  if (!response.ok) throw Error("\uC2DC\uC138 \uC11C\uBC84 \uC5F0\uACB0 \uC2E4\uD328");
+  return response.json();
+}
+function stockWithQuote(stock, quote) {
+  if (!stock || quote?.id !== stock.id || quote.mode !== "live" || !Number.isFinite(quote.change) || !(quote.price > 0)) return null;
+  return { ...stock, change: quote.change, quote, map: quote.change < 0 ? "river" : "rooftop" };
+}
+
+// demo/shared/quote-display.mjs
+var signed = (v, digits = 2) => Number.isFinite(v) ? `${v >= 0 ? "+" : ""}${v.toFixed(digits)}%` : "\uC2DC\uC138 \uC5C6\uC74C";
+function quoteDisplay(q) {
+  if (!q || q.mode !== "live") return { price: "", change: "", status: "\uB370\uBAA8 \xB7 \uAC00\uC0C1 \uB4F1\uB77D\uB960", time: "" };
+  const labels = { open: "\uC7A5\uC911", closed: "\uC7A5\uB9C8\uAC10/\uD734\uC7A5", holiday: "\uD734\uC7A5", delayed: "\uC2DC\uC138 \uC9C0\uC5F0", failed: "\uC218\uC9D1 \uC2E4\uD328 \xB7 \uB9C8\uC9C0\uB9C9 \uC815\uC0C1\uAC12", unavailable: "\uC2DC\uC138 \uC5C6\uC74C", unknown: "\uC7A5\uC0C1\uD0DC \uBBF8\uD655\uC778" };
+  const time = (value) => value ? new Date(value).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : null;
+  const valid = Number.isFinite(q.price) && Number.isFinite(q.change);
+  return { price: valid ? `${q.price.toLocaleString("ko-KR")}\uC6D0` : "\uC2DC\uC138 \uC5C6\uC74C", change: valid ? signed(q.change) : "", status: `${q.source ?? "\uB124\uC774\uBC84 \uC6F9"} \xB7 ${labels[q.status] ?? labels.unknown}`, time: `${q.quoteAt ? "\uC2DC\uC138 " + time(q.quoteAt) : "\uC2DC\uC138 \uC2DC\uAC01 \uBBF8\uC81C\uACF5"} \xB7 ${q.fetchedAt ? "\uC870\uD68C " + time(q.fetchedAt) : "\uC815\uC0C1 \uC870\uD68C \uC5C6\uC74C"}` };
+}
+
 // demo/shared/demo-stocks.mjs
 var MARKET_CAP_SNAPSHOT = Object.freeze({ "asOf": "2026-11-10", "asOfTime": "2026-11-10 15:10+09:00", "unit": "\uC5B5\uC6D0", "sourceUrl": "https://stockgo.kr/market", "sourceLabel": "\uC8FC\uC2DD\uC54C\uB77C\uBBF8 \uC2DC\uAC00\uCD1D\uC561 \uD45C", "fetchedAt": "2026-11-10T06:15:41.669707+00:00" });
 var DEMO_STOCKS = Object.freeze([{ "id": "005930", "name": "\uC0BC\uC131\uC804\uC790", "market": "KOSPI", "change": 1.2, "map": "rooftop", "marketCap": 11669172 }, { "id": "000660", "name": "SK\uD558\uC774\uB2C9\uC2A4", "market": "KOSPI", "change": 2.4, "map": "rooftop", "marketCap": 8933921 }, { "id": "035420", "name": "NAVER", "market": "KOSPI", "change": -1.3, "map": "river", "marketCap": 294330 }, { "id": "009150", "name": "\uC0BC\uC131\uC804\uAE30", "market": "KOSPI", "change": 0.8, "map": "rooftop", "marketCap": 659545 }, { "id": "010140", "name": "\uC0BC\uC131\uC911\uACF5\uC5C5", "market": "KOSPI", "change": -0.7, "map": "river", "marketCap": 144408 }, { "id": "005380", "name": "\uD604\uB300\uCC28", "market": "KOSPI", "change": 1.1, "map": "rooftop", "marketCap": 559532 }, { "id": "000270", "name": "\uAE30\uC544", "market": "KOSPI", "change": -0.6, "map": "river", "marketCap": 375186 }, { "id": "373220", "name": "LG\uC5D0\uB108\uC9C0\uC194\uB8E8\uC158", "market": "KOSPI", "change": 1.5, "map": "rooftop", "marketCap": 776880 }, { "id": "207940", "name": "\uC0BC\uC131\uBC14\uC774\uC624\uB85C\uC9C1\uC2A4", "market": "KOSPI", "change": -1, "map": "river", "marketCap": 678162 }, { "id": "105560", "name": "KB\uAE08\uC735", "market": "KOSPI", "change": 0.4, "map": "rooftop", "marketCap": 541253 }].map((stock) => {
   const sample = true ? { "000660": 5, "000270": -5 }[stock.id] : void 0;
   return Object.freeze(sample === void 0 ? stock : { ...stock, change: sample });
 }));
-var findStock = (id) => DEMO_STOCKS.find((stock) => stock.id === id);
 
 // demo/shared/stock-search.mjs
 var normalizeSearch = (value) => String(value).normalize("NFKC").replace(/\s+/gu, "").toLocaleLowerCase("ko");
@@ -3959,17 +3980,29 @@ var female = document.querySelector('[value="female"]');
 if (female && gender === "female") female.checked = true;
 var pageSize = 30;
 var matches = [];
-var chosen = null;
 var shown = 0;
-function select(stock) {
-  chosen = findStock(stock.id);
+var chosen = null;
+var cached = null;
+var request;
+async function select(stock) {
+  request?.abort();
+  request = new AbortController();
+  chosen = stock;
+  cached = null;
   search.value = stock.name;
   list.hidden = true;
-  const destination = mapForChange(chosen?.change);
-  status.textContent = destination ? stock.name + " \u2192 " + (destination === "river" ? "\uD55C\uAC15\uACF5\uC6D0" : "\uB8E8\uD504\uD0D1 \uB77C\uC6B4\uC9C0") : stock.name + " \xB7 \uC2DC\uC138 \uC5F0\uACB0 \uD6C4 \uC785\uC7A5\uD560 \uC218 \uC788\uC5B4\uC694.";
-  enter.disabled = !destination;
-  if (destination) enter.focus({ preventScroll: true });
-  else search.focus({ preventScroll: true });
+  enter.disabled = false;
+  status.textContent = stock.name + " \xB7 \uC785\uC7A5\uD558\uBA74 \uC2DC\uC138\uC5D0 \uB530\uB77C \uC774\uB3D9\uD574\uC694.";
+  try {
+    const quote = await cachedQuote(stock.id, request.signal);
+    if (chosen !== stock) return;
+    cached = stockWithQuote(stock, quote);
+    if (cached) {
+      const view = quoteDisplay(quote);
+      status.textContent = stock.name + " \xB7 " + view.price + " \xB7 " + view.change + " \xB7 " + view.status + " \xB7 " + view.time;
+    }
+  } catch {
+  }
 }
 function appendResults() {
   const first = shown;
@@ -3985,13 +4018,6 @@ function appendResults() {
     detail.textContent = stock.id + (stock.type === "ETF" ? " \xB7 ETF" : " \xB7 " + stock.market);
     name.append(detail);
     row.append(name);
-    const demo = findStock(stock.id);
-    if (demo) {
-      const change = document.createElement("span");
-      change.textContent = (demo.change >= 0 ? "+" : "") + demo.change.toFixed(1) + "%";
-      change.className = demo.change < 0 ? "down" : "up";
-      row.append(change);
-    }
     row.onclick = () => select(stock);
     list.append(row);
   }
@@ -4010,7 +4036,9 @@ function appendResults() {
   if (first > 0) list.children[first].focus();
 }
 function update() {
+  request?.abort();
   chosen = null;
+  cached = null;
   enter.disabled = true;
   list.replaceChildren();
   list.scrollTop = 0;
@@ -4025,7 +4053,13 @@ function update() {
 }
 search.addEventListener("input", update);
 enter.onclick = () => {
-  const url = stockURL(chosen, document.querySelector('[name="gender"]:checked')?.value ?? null);
+  if (!chosen) return;
+  const gender2 = document.querySelector('[name="gender"]:checked')?.value ?? null;
+  const params = new URLSearchParams({ stock: chosen.id });
+  if (gender2) params.set("gender", gender2);
+  const url = stockURL(cached, gender2) ?? "lounge/?" + params;
   if (url) location.assign(url);
 };
 update();
+var previousStatus = new URLSearchParams(location.search).get("status");
+if (previousStatus) status.textContent = previousStatus === "missing" ? "\uC774 \uC885\uBAA9\uC758 \uB4F1\uB77D\uB960\uC744 \uD655\uC778\uD560 \uC218 \uC5C6\uC5B4\uC694." : "\uC2DC\uC138 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.";
