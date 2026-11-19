@@ -1,0 +1,51 @@
+{
+  "version": 4,
+  "coordinate_system": "blender_z_up",
+  "camera_type": "perspective",
+  "follow_avatar": true,
+  "pan_enabled": false,
+  "azimuth_degrees": {
+    "min": -180,
+    "max": 180,
+    "default": 0
+  },
+  "elevation_degrees": {
+    "min": -65,
+    "max": 45,
+    "default": 6
+  },
+  "distance_range": {
+    "min": 3.2,
+    "max": 5.5,
+    "default": 4.7
+  },
+  "target_height": 1.25,
+  "fov_degrees": 50,
+  "near": 0.15,
+  "far": 4000,
+  "player_bounds": {
+    "x": [
+      -18.8,
+      18.8
+    ],
+    "y": [
+      -9.8,
+      12.8
+    ]
+  },
+  "notes": "SP6 local trial: existing follow-camera code,6-degree initial pitch retains Namsan skyline; roof/entrance3D blockers in world. Operational policy unchanged.",
+  "continuous_yaw": true,
+  "camera_radius": 0.2,
+  "camera_bounds": {
+    "x": [
+      -18.8,
+      18.8
+    ],
+    "y": [
+      -9.8,
+      12.8
+    ]
+  },
+  "preserve_target_height": true,
+  "camera_min_height": 0.5
+}

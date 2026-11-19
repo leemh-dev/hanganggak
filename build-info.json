@@ -1,0 +1,127 @@
+{
+  "commit": "099243589f6da4f83635fb6c7ca7b840dba851b1",
+  "builtAt": "2026-11-19T12:08:38.853Z",
+  "kind": "isolated single-player review, no live server or prices",
+  "files": [
+    {
+      "path": "river/mobile-world.glb",
+      "bytes": 12985572,
+      "sha256": "2a3f337dc6f23f5c8cc9f504d084b448dc8fd8a9fece655acecbfeaf75009a3a"
+    },
+    {
+      "path": "river/landing.glb",
+      "bytes": 2076,
+      "sha256": "98c1a1a19eb49f514e35c9198f9e1212aae0f48baa52233b54d4a93dbdb66bc6"
+    },
+    {
+      "path": "river/quality-config.json",
+      "bytes": 2502,
+      "sha256": "c2e57daf6773a6244afb19ae273b0a611755a941940da4cbdd30b5b6de53bf50"
+    },
+    {
+      "path": "river/baseline-config.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "river/world.json",
+      "bytes": 41829,
+      "sha256": "fc4eadf0a1ee27ece1e5af845a0959e252c7ccdc75a3adfea1d97cc0da354709"
+    },
+    {
+      "path": "river/policy.json",
+      "bytes": 778,
+      "sha256": "6971ca34f695ae68c14108441186d6fa2fa7b8a703a2c1404368d57d9919a388"
+    },
+    {
+      "path": "river/river-world.json",
+      "bytes": 41829,
+      "sha256": "fc4eadf0a1ee27ece1e5af845a0959e252c7ccdc75a3adfea1d97cc0da354709"
+    },
+    {
+      "path": "river/river-policy.json",
+      "bytes": 778,
+      "sha256": "6971ca34f695ae68c14108441186d6fa2fa7b8a703a2c1404368d57d9919a388"
+    },
+    {
+      "path": "river/river.glb",
+      "bytes": 27801960,
+      "sha256": "527e0a56c10b58e9d7ee5754faab65d8b868ca0c5ba8b92537e2b80d59950370"
+    },
+    {
+      "path": "river/sky.exr",
+      "bytes": 3065327,
+      "sha256": "fd7482e84dd29b9673071fcaf752a2aec7e20d4efb8558a6c6d20c81b6a964dc"
+    },
+    {
+      "path": "river/evening-sky.exr",
+      "bytes": 3167611,
+      "sha256": "a5f2543e1d91ce7a2b8426d56ccedd662c297f9fc559dfaa4b7a064a386ad2da"
+    },
+    {
+      "path": "river/billboard-ko.otf",
+      "bytes": 51144,
+      "sha256": "4608f5d3fd4027ac0a274eab2f731d3f00b1f0a46bc0026c44fcd65bea5b3d2d"
+    },
+    {
+      "path": "lounge/mobile-world.glb",
+      "bytes": 25502824,
+      "sha256": "c1dde0e69064f91fab2bb5bce098242b25967bb9f4dff9175118b7dd03b87705"
+    },
+    {
+      "path": "lounge/quality-config.json",
+      "bytes": 2733,
+      "sha256": "e3debdbb209f045f8c8b65db70a9fb68eaf4a3fa720a2e28dcbeb8a04bc1a914"
+    },
+    {
+      "path": "lounge/baseline-config.json",
+      "bytes": 134,
+      "sha256": "f486c5cba11f615d48b69b1c32e439e3260912a131c535874a5e55f6537e0a2e"
+    },
+    {
+      "path": "lounge/world.json",
+      "bytes": 251905,
+      "sha256": "20041897d08c998ac2cf5e4880dafb800ce0b1fa8f43429546e6b8c41b6a4c74"
+    },
+    {
+      "path": "lounge/policy.json",
+      "bytes": 949,
+      "sha256": "814a32009e488795562f0b06bd4840abe79db243649aecf03f35b65d24a3b816"
+    },
+    {
+      "path": "lounge/river-world.json",
+      "bytes": 41829,
+      "sha256": "fc4eadf0a1ee27ece1e5af845a0959e252c7ccdc75a3adfea1d97cc0da354709"
+    },
+    {
+      "path": "lounge/river-policy.json",
+      "bytes": 778,
+      "sha256": "6971ca34f695ae68c14108441186d6fa2fa7b8a703a2c1404368d57d9919a388"
+    },
+    {
+      "path": "lounge/lounge.glb",
+      "bytes": 40318988,
+      "sha256": "9cc83f35f5bd39fdb53c4053c983bc02f747fa06628039bbe30f5e3957018405"
+    },
+    {
+      "path": "lounge/sky.exr",
+      "bytes": 958656,
+      "sha256": "b79b248241ddecfbf08029911d919b33f51b4cbc1da8eec4b2cd87d53355b274"
+    },
+    {
+      "path": "lounge/evening-sky.exr",
+      "bytes": 952252,
+      "sha256": "5ffed85c2a145f6f5e5e5cc0b6852e460bccb079c45e80c1aafc3779a20684a1"
+    },
+    {
+      "path": "lounge/billboard-ko.otf",
+      "bytes": 51144,
+      "sha256": "4608f5d3fd4027ac0a274eab2f731d3f00b1f0a46bc0026c44fcd65bea5b3d2d"
+    },
+    {
+      "path": "ant-review.glb",
+      "bytes": 5339064,
+      "sha256": "5afaa1c7b6eca54ceb250e1a07f3991e7efa12c2053e1fd8e65cad6fb92ba0c5"
+    }
+  ]
+}
