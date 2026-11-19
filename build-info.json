@@ -1,6 +1,6 @@
 {
-  "commit": "125fadb8ebd586436c82138e89f6de94f82ec378",
-  "builtAt": "2026-11-19T13:09:20.777Z",
+  "commit": "37de742f5cf92a0c421d7c93675a58e1605f6fa1",
+  "builtAt": "2026-11-19T13:37:34.353Z",
   "kind": "isolated single-player review, no live server or prices",
   "files": [
     {
@@ -15,8 +15,8 @@
     },
     {
       "path": "river/quality-config.json",
-      "bytes": 2469,
-      "sha256": "5fd9bb6fcf5e9a319bfd9a44eb57c4859d771610403b9f151d84acb79ffc2251"
+      "bytes": 2472,
+      "sha256": "fd1a776247407d5cf195792e0c64d70d57444bc1d943b8a3a0050e45534e703a"
     },
     {
       "path": "river/baseline-config.json",
