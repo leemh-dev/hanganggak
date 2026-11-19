@@ -21,6 +21,18 @@
  #ux-toast{bottom:max(115px,calc(env(safe-area-inset-bottom) + 104px))}
 }
 .comic-options{flex-wrap:wrap}
+</style><style>#review-dock{position:fixed;z-index:35;right:max(14px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));display:flex;gap:8px}
+#review-dock[hidden],#review-dock [hidden]{display:none}
+#review-dock button{min-width:45px;min-height:45px;cursor:pointer;color:#fff;background:#19363bf2;border:1px solid #ffffff48;border-radius:14px;font-size:22px}
+#review-dock>button{box-shadow:0 2px 9px #00151944}
+.review-panel{position:absolute;bottom:56px;right:0;background:#122d32f7;color:white;border:1px solid #ffffff40;border-radius:16px;padding:10px;width:max-content;max-width:calc(100vw - 28px);box-sizing:border-box}
+#review-emotes{display:grid;grid-template-columns:repeat(5,45px);gap:4px}
+#review-chat{width:min(312px,calc(100vw - 28px));font-size:14px}
+#review-chat header,#review-send{display:flex;align-items:center;gap:6px;justify-content:space-between}
+#review-log{max-height:min(23dvh,150px);overflow:auto;overflow-wrap:anywhere;padding:0;list-style:none}
+#review-log li{padding:5px 8px}#review-send input,#review-time{min-width:0;border-radius:8px;padding:8px;color:#123;background:#f1f4ee;font:16px system-ui}
+#review-send input{flex:1}#review-send button{font-size:14px}
+#ux-menu label[for=review-time]{display:block;margin-top:12px;font-size:14px}#review-time-mode{font-size:12px}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -38,9 +50,19 @@
 <div id="ux-stick" aria-label="이동 조이스틱"><span></span></div>
 <header id="ux-bar"><strong id="ux-map-name">한강각</strong><button id="ux-menu-toggle" aria-label="메뉴" aria-controls="ux-menu" aria-expanded="false">☰</button></header>
 <section id="ux-entry" role="dialog" aria-modal="true" aria-labelledby="ux-entry-title"><div class="ux-card"><h1 id="ux-entry-title">잠시만 기다려 주세요</h1><p id="ux-entry-note">공간을 불러오고 있어요.</p><button id="ux-enter" disabled>불러오는 중…</button><a href="../">종목 다시 선택</a></div></section>
-<aside id="ux-menu" aria-label="게임 메뉴" hidden><h2>공간 둘러보기</h2><p>조이스틱 또는 바닥 탭으로 이동<br>소파·벤치를 누르면 앉기<br>앉아서 바닥을 누르면 일어나 이동<br>사다리를 누르면 오르내리기 · 다리 바깥 보행로에서 강 쪽으로 이동하면 낙하<br>드래그로 시점 · 두 손가락으로 줌</p><button id="ux-reset">시점 초기화</button><a href="../">종목 선택</a><details><summary>제스처</summary><button data-ux-action="jump">점프</button><button data-ux-action="cheer">환호</button><button data-ux-action="sad">슬픔</button></details><details><summary>기기 검사</summary><p id="ux-performance">측정 준비 중</p><button id="ux-copy">기기 기록 복사</button><textarea id="ux-record" readonly aria-label="기기 검사 기록" hidden></textarea></details><button id="ux-close">메뉴 닫기</button></aside>
+<aside id="ux-menu" aria-label="게임 메뉴" hidden><h2>공간 둘러보기</h2><p>조이스틱 또는 바닥 탭으로 이동<br>소파·벤치를 누르면 앉기<br>앉아서 바닥을 누르면 일어나 이동<br>사다리를 누르면 오르내리기 · 다리 바깥 보행로에서 강 쪽으로 이동하면 낙하<br>드래그로 시점 · 두 손가락으로 줌</p><button id="ux-reset">시점 초기화</button><a href="../">종목 선택</a><label for="review-time">데모 시각 · <span id="review-time-mode">서울 현재 시각</span></label><input type="time" id="review-time"><button id="review-auto">서울 현재 시각으로 복귀</button><details><summary>기기 검사</summary><p id="ux-performance">측정 준비 중</p><button id="ux-copy">기기 기록 복사</button><textarea id="ux-record" readonly aria-label="기기 검사 기록" hidden></textarea></details><button id="ux-close">메뉴 닫기</button></aside>
 <div id="ux-toast" role="status" aria-live="polite" hidden></div>
-</main><script type="module">import('../stock-policy.js?v=099243589f6da4f83635fb6c7ca7b840dba851b1').then(m=>m.ensureStockRoute()?import('./app.js?v=099243589f6da4f83635fb6c7ca7b840dba851b1'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><script src="../device-check.js" defer></script></body></html>
+<div id="review-dock" hidden>
+ <div id="review-emotes" class="review-panel" role="group" aria-label="제스처 선택" hidden></div>
+ <section id="review-chat" class="review-panel" aria-label="데모 채팅" hidden>
+  <header><strong>채팅 · 나에게만 표시</strong><button id="review-chat-close" type="button" aria-label="채팅 닫기">×</button></header>
+  <ul id="review-log" role="log" aria-live="polite"></ul>
+  <form id="review-send"><input id="review-message" maxlength="200" aria-label="메시지" placeholder="메시지 입력" enterkeyhint="send"><button>전송</button></form>
+ </section>
+ <button id="open-emotes" aria-label="제스처" aria-controls="review-emotes" aria-expanded="false">🙂</button>
+ <button id="open-chat" aria-label="채팅" aria-controls="review-chat" aria-expanded="false">💬</button>
+</div>
+</main><script type="module">import('../stock-policy.js?v=4d5e88ee7cb607066e9fcd3e79820210f2f48a97').then(m=>m.ensureStockRoute()?import('./app.js?v=4d5e88ee7cb607066e9fcd3e79820210f2f48a97'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><script src="../device-check.js" defer></script></body></html>
 
 
 
