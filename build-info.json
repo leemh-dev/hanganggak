@@ -1,6 +1,6 @@
 {
-  "commit": "65082bdfa19c926248b03b926c49435c7dbe692a",
-  "builtAt": "2026-11-20T06:53:15.471Z",
+  "commit": "5001dd9c50a50821639abb1b727ecdda4dec7b64",
+  "builtAt": "2026-11-20T07:09:07.806Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
@@ -10,8 +10,8 @@
     },
     {
       "path": "river/anteater.glb",
-      "bytes": 1815972,
-      "sha256": "6d9071a44d85ca6c1fcdfd67f89770ecfec16cbcddc7dc131a39c34b8f715cf9"
+      "bytes": 1850660,
+      "sha256": "4555d623e815499a8db807b8fcf5a8023e540c5e265c1784f7ac43132cade85a"
     },
     {
       "path": "river/clerk.glb",
