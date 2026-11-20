@@ -1,6 +1,7 @@
 {
-  "commit": "8b275a67e1cc6fc3c2c58475ebb7dafd7d36f819",
-  "builtAt": "2026-11-20T07:34:19.078Z",
+  "commit": "ac42082c28c4e5232d73437b8ddf2cc0628b31ea",
+  "usMode": "naver-web",
+  "builtAt": "2026-11-20T11:28:58.567Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
