@@ -1,4 +1,4 @@
-// demo/beta-quality-completion/naver-symbol-links.json
+// demo/market/naver-symbol-links.json
 var naver_symbol_links_default = {
   A: "A",
   AA: "AA",
@@ -5590,7 +5590,7 @@ var naver_symbol_links_default = {
 };
 
 // demo/beta-quality-completion/naver-us-web.mjs
-var naverUSWeb = true;
+var naverUSWeb = false;
 function naverDestination(stock) {
   const ric = naver_symbol_links_default[stock.ticker];
   if (ric) return { url: "https://m.stock.naver.com/worldstock/stock/" + encodeURIComponent(ric) + "/total", label: "\uB124\uC774\uBC84 \uC2DC\uC138" };
