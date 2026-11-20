@@ -83,14 +83,19 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #review-log small{font:600 11px/1.25 system-ui;color:#c9dcda}
 #review-log li span{max-width:88%;padding:5px 9px;border-radius:9px;background:#304e52;color:#fff;line-height:1.4;white-space:pre-wrap}
 #review-log li.mine{align-items:flex-end}
-#review-log .mine span{background:#d0ebd8;color:#143129}
-#review-chat header select{flex:1;min-width:0;margin:0;font:650 15px system-ui}
+#review-log .mine span{background:#275452}
+#review-log li.chat-notice span{background:#403c29;color:#ffdc72}
+#review-chat header strong{font:650 14px system-ui}
 #review-chat #review-chat-close{font-size:20px;background:transparent;border-color:transparent}
 #review-send input{min-width:0;border-radius:8px;padding:8px;color:#123;background:#f1f4ee;font:16px system-ui}
 #review-send input{flex:1}#review-send button{font-size:14px}
 #sky-notice{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 56px);left:max(12px,env(safe-area-inset-left));max-width:min(330px,85vw);min-height:38px;background:#183b40ed;color:#fff2d3;border:1px solid #c9af73;border-radius:10px;text-align:left;font-size:13px;overflow-wrap:anywhere;z-index:30}
 #sky-notice[hidden]{display:none}
-#review-channel{width:100%;min-height:40px;margin:6px 0;background:#23474a;color:white;border:1px solid #54737a;border-radius:8px;padding:5px}
+#review-channel{display:flex;flex:none;gap:2px}
+#review-channel button{min-width:38px;min-height:44px;padding:0 5px;border-radius:8px;font-size:19px;background:transparent;border-color:transparent}
+#review-channel button[aria-pressed=true]{background:#36585b;border-color:#8ec1bb}
+#review-channel button[data-channel=notice][aria-pressed=true]{background:#494029;border-color:#e4c569}
+#review-channel button:focus-visible{outline:2px solid white;outline-offset:1px}
 #review-chat p{margin:4px 0 8px;font-size:13px;color:#d8e8e8}
 #review-chat .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 
@@ -118,12 +123,14 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #open-chat[data-unread]::after{content:'';position:absolute;right:4px;top:3px;width:10px;height:10px;border:2px solid #173739;border-radius:50%;background:#ffd566}
 
 #room-speech{position:fixed;inset:0;pointer-events:none;z-index:12}
-.speech-bubble{position:absolute;transform:translate(-50%,-100%);max-width:min(200px,44vw);display:flex;padding:5px 10px;border-radius:12px;background:#fffff5;color:#172b2b;box-shadow:0 2px 7px #13272755;font:600 14px/1.35 system-ui}
+.speech-bubble{position:absolute;transform:translate(-50%,-100%);max-width:min(200px,44vw);display:flex;padding:5px 10px;border-radius:12px;background:#243d41;color:white;box-shadow:0 2px 7px #13272755;font:600 14px/1.35 system-ui}
+.speech-bubble.chat-notice{background:#403c29;color:#ffdc72}
+.speech-bubble.chat-notice::after{border-top-color:#403c29}
 .speech-bubble[hidden]{display:none}
-.speech-bubble::after{content:'';position:absolute;top:100%;left:calc(50% - 4px);border:4px solid transparent;border-top-color:#fffff5}
+.speech-bubble::after{content:'';position:absolute;top:100%;left:calc(50% - 4px);border:4px solid transparent;border-top-color:#243d41}
 .speech-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (pointer:coarse),(max-width:600px){
- #review-chat{position:fixed;top:max(70px,calc(env(safe-area-inset-top) + 58px));right:max(12px,env(safe-area-inset-right));bottom:auto;width:min(260px,calc(100vw - 24px));max-height:48dvh;overflow:auto;padding:8px}
+ #review-chat{position:fixed;top:max(70px,calc(env(safe-area-inset-top) + 58px));right:max(12px,env(safe-area-inset-right));bottom:auto;width:min(320px,calc(100vw - 24px));max-height:48dvh;overflow:auto;padding:8px}
  #review-chat #review-log{max-height:min(20dvh,136px);margin:4px 0}
  #review-chat #review-send input{flex:1;width:0}
 }
@@ -214,13 +221,17 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <div id="review-emotes" class="review-panel" role="group" aria-label="제스처 선택" hidden></div>
  <section id="review-chat" class="review-panel" aria-label="종목방 채팅" hidden>
   <header>
-  <label for="review-channel" class="visually-hidden">메시지 종류</label>
-  <select id="review-channel"><option value="chat">종목방 채팅</option><option value="notice">비행선 공지</option></select>
+  <strong>종목방 채팅</strong>
   <button id="review-chat-close" type="button" aria-label="채팅 닫기">×</button></header>
-  <p id="notice-scope" hidden></p><p id="notice-state" role="status" hidden></p>
+  <p id="notice-state" role="status" hidden></p>
   <p id="room-chat-status" role="status"></p>
   <ul id="review-log" role="log" aria-live="polite"></ul>
-  <form id="review-send"><input id="review-message" maxlength="200" aria-label="메시지" placeholder="메시지 입력" enterkeyhint="send"><button>전송</button></form>
+  <form id="review-send">
+   <div id="review-channel" role="group" aria-label="메시지 종류">
+    <button type="button" data-channel="chat" aria-pressed="true" aria-label="일반 채팅" title="일반 채팅">💬</button>
+    <button type="button" data-channel="notice" aria-pressed="false" aria-label="공지" title="공지">📣</button>
+   </div>
+   <input id="review-message" maxlength="200" aria-label="메시지" placeholder="메시지 입력" enterkeyhint="send"><button type="submit">전송</button></form>
  </section>
  <button id="open-emotes" aria-label="제스처" aria-controls="review-emotes" aria-expanded="false">🙂</button>
  <button id="open-chat" aria-label="채팅" aria-controls="review-chat" aria-expanded="false">💬</button>
@@ -251,7 +262,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=aff93b618be63526c10a0950b9ae3e459b76a533').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=aff93b618be63526c10a0950b9ae3e459b76a533'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=fe2109652d49c928c6003954de642b2c06130bd4').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=fe2109652d49c928c6003954de642b2c06130bd4'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
