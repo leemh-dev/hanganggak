@@ -3,7 +3,7 @@ function connectPlayRoom(origin, id) {
   const url = new URL("/play/" + encodeURIComponent(id), origin);
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   const players = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
-  let population = null;
+  let population = null, clockOffset = 0;
   function setPopulation(count) {
     if (count === population) return;
     population = count;
@@ -36,6 +36,7 @@ function connectPlayRoom(origin, id) {
       if (socket !== ws) return;
       const m = JSON.parse(event.data);
       if (m.type === "welcome") {
+        clockOffset = Number.isFinite(m.serverTime) ? m.serverTime - Date.now() : 0;
         self = { id: m.id, name: m.name, slot: m.slot, entryIndex: m.entryIndex };
         attempt = 0;
         receive(m.players);
@@ -51,7 +52,7 @@ function connectPlayRoom(origin, id) {
         clearTimeout(item.timer);
         pending.delete(m.request);
         if (m.error) item.reject(Error(m.error));
-        else item.resolve();
+        else item.resolve(m);
       }
     };
     ws.onclose = () => {
@@ -104,16 +105,20 @@ function connectPlayRoom(origin, id) {
         lastPose = data;
       }
     },
+    serverNow: () => Date.now() + clockOffset,
     send(text) {
+      return this.request({ type: "chat", text });
+    },
+    request(message) {
       if (!this.connected) return Promise.reject(Error("\uC885\uBAA9\uBC29\uC5D0 \uB2E4\uC2DC \uC5F0\uACB0 \uC911\uC774\uC5D0\uC694."));
       const request = ++sequence;
       return new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
           pending.delete(request);
-          reject(Error("\uC804\uC1A1 \uD655\uC778\uC774 \uB2A6\uC5B4\uC9C0\uACE0 \uC788\uC5B4\uC694. \uCC44\uD305 \uBAA9\uB85D\uC744 \uD655\uC778\uD574 \uC8FC\uC138\uC694."));
+          reject(Error("\uC11C\uBC84 \uC751\uB2F5\uC774 \uB2A6\uC5B4\uC694. \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694."));
         }, 8e3);
         pending.set(request, { resolve, reject, timer });
-        socket.send(JSON.stringify({ type: "chat", request, text }));
+        socket.send(JSON.stringify({ ...message, request }));
       });
     }
   };
