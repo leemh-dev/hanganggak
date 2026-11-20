@@ -57,6 +57,9 @@
 .stock-results{max-height:40dvh;overflow:auto;overscroll-behavior:contain}
 .stock-results button{display:block;text-align:left;width:100%;border:0;border-bottom:1px solid #365457;border-radius:0;background:transparent;font:inherit}
 .stock-results small{display:block;color:#bed2d0}
+
+.stock-results .stock-row[data-stock]{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 4px}
+.stock-results .room-count{flex:none;color:#c9e6d9;font-size:13px;font-variant-numeric:tabular-nums}
 </style><style>#review-dock{position:fixed;z-index:35;right:max(14px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));display:flex;gap:8px}
 #review-dock[hidden],#review-dock [hidden]{display:none}
 #review-dock button{min-width:45px;min-height:45px;cursor:pointer;color:#fff;background:#19363bf2;border:1px solid #ffffff48;border-radius:14px;font-size:22px}
@@ -159,7 +162,7 @@
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=bf62e4238bc44c1e909b1f732a551cd21cc58322').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=bf62e4238bc44c1e909b1f732a551cd21cc58322'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=e1f0b59e399a9507a4d187693d2cfb74fc399589').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=e1f0b59e399a9507a4d187693d2cfb74fc399589'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
