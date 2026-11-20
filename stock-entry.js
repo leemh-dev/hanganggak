@@ -3966,10 +3966,20 @@ function searchStocks(query = "", sort = "cap", stocks = DEMO_STOCKS) {
 function bindStockSearch({ search: search2, list: list2, status: status2, catalog, select: select2, onInput = () => {
 } }) {
   const pageSize = 30;
-  let matches = [], shown = 0;
-  function appendResults() {
+  const byCap = searchStocks("", "cap", catalog);
+  const dialog = search2.closest("dialog");
+  let matches = [], shown = 0, counts = null, failed = false, selected = false;
+  let controller, timer;
+  const countLabel = (id) => counts ? (counts[id] ?? 0).toLocaleString("ko-KR") + "\uBA85" : failed ? "\uC778\uC6D0 \uBBF8\uD655\uC778" : "\uC778\uC6D0 \uD655\uC778 \uC911";
+  function countBadge(stock) {
+    const badge = document.createElement("span");
+    badge.className = "room-count";
+    badge.textContent = countLabel(stock.id);
+    return badge;
+  }
+  function appendResults(size = pageSize, focusNew = false) {
     const first = shown;
-    const batch = matches.slice(first, first + pageSize);
+    const batch = matches.slice(first, first + size);
     for (const stock of batch) {
       const row = document.createElement("button");
       row.type = "button";
@@ -3985,8 +3995,11 @@ function bindStockSearch({ search: search2, list: list2, status: status2, catalo
         detail.textContent += " \xB7 \uC2DC\uCD1D " + amount + "\uC6D0";
       }
       name.append(detail);
-      row.append(name);
-      row.onclick = () => select2(stock);
+      row.append(name, countBadge(stock));
+      row.onclick = () => {
+        selected = true;
+        select2(stock);
+      };
       list2.append(row);
     }
     shown += batch.length;
@@ -3997,25 +4010,89 @@ function bindStockSearch({ search: search2, list: list2, status: status2, catalo
       more.textContent = "\uACB0\uACFC \uB354 \uBCF4\uAE30";
       more.onclick = () => {
         more.remove();
-        appendResults();
+        appendResults(pageSize, true);
       };
       list2.append(more);
     }
-    if (first > 0) list2.children[first].focus();
+    if (focusNew && batch.length) list2.children[first].focus();
+  }
+  function drawResults(items, keepPosition = false) {
+    const focusedId = list2.contains(document.activeElement) ? document.activeElement.dataset.stock : null;
+    const scroll = keepPosition ? list2.scrollTop : 0;
+    const size = keepPosition ? Math.max(pageSize, shown) : pageSize;
+    matches = items;
+    shown = 0;
+    list2.replaceChildren();
+    list2.hidden = !matches.length;
+    appendResults(size);
+    if (keepPosition && focusedId) list2.querySelector('[data-stock="' + focusedId + '"]')?.focus({ preventScroll: true });
+    list2.scrollTop = scroll;
+  }
+  function updatePopular() {
+    const popular = counts ? byCap.slice().sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0)).slice(0, 10) : [];
+    const same = matches.length === popular.length && matches.every((s, i) => s.id === popular[i].id);
+    if (!same) drawResults(popular, true);
+    const message = counts ? Object.keys(counts).length ? "\uC811\uC18D\uC790\uAC00 \uB9CE\uC740 \uC885\uBAA9" : "\uD604\uC7AC \uC811\uC18D\uC790 0\uBA85 \xB7 \uC2DC\uAC00\uCD1D\uC561\uC21C" : failed ? "\uD604\uC7AC \uC811\uC18D \uC778\uC6D0\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC885\uBAA9 \uAC80\uC0C9\uC740 \uAC00\uB2A5\uD574\uC694." : "\uC811\uC18D \uC778\uC6D0 \uD655\uC778 \uC911\u2026";
+    if (status2.textContent !== message) status2.textContent = message;
+  }
+  function refreshLabels() {
+    if (selected) return;
+    if (!normalizeSearch(search2.value)) updatePopular();
+    for (const badge of list2.querySelectorAll(".room-count")) {
+      const label = countLabel(badge.parentElement.dataset.stock);
+      if (badge.textContent !== label) badge.textContent = label;
+    }
   }
   function update() {
+    selected = false;
     onInput();
-    list2.replaceChildren();
-    list2.scrollTop = 0;
-    shown = 0;
     const query = normalizeSearch(search2.value);
-    matches = query ? searchStocks(query, "cap", catalog) : [];
-    list2.hidden = matches.length === 0;
-    status2.textContent = query ? matches.length ? "\uAC80\uC0C9 \uACB0\uACFC " + matches.length.toLocaleString("ko-KR") + "\uAC1C \xB7 \uC2DC\uAC00\uCD1D\uC561 \uB192\uC740 \uC21C" : "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC5B4\uC694." : "";
-    appendResults();
+    if (!query) {
+      drawResults([]);
+      updatePopular();
+    } else {
+      drawResults(searchStocks(query, "cap", catalog));
+      status2.textContent = matches.length ? "\uAC80\uC0C9 \uACB0\uACFC " + matches.length.toLocaleString("ko-KR") + "\uAC1C \xB7 \uC2DC\uAC00\uCD1D\uC561 \uB192\uC740 \uC21C" : "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC5B4\uC694.";
+    }
   }
+  async function refresh() {
+    const request2 = new AbortController();
+    controller = request2;
+    try {
+      const response = await fetch(quoteOrigin + "/rooms/occupancy", { cache: "no-store", signal: AbortSignal.any([request2.signal, AbortSignal.timeout(3e4)]) });
+      if (!response.ok) throw Error("occupancy unavailable");
+      const snapshot = await response.json();
+      if (!snapshot.counts || typeof snapshot.counts !== "object") throw Error("invalid occupancy");
+      if (request2.signal.aborted) return;
+      counts = snapshot.counts;
+      failed = false;
+    } catch {
+      if (request2.signal.aborted) return;
+      counts = null;
+      failed = true;
+    } finally {
+      if (controller === request2) controller = null;
+    }
+    refreshLabels();
+    timer = setTimeout(refresh, 15e3);
+  }
+  function syncPolling() {
+    clearTimeout(timer);
+    controller?.abort();
+    if (!document.hidden && (!dialog || dialog.open)) refresh();
+  }
+  if (dialog) new MutationObserver(syncPolling).observe(dialog, { attributes: true, attributeFilter: ["open"] });
+  document.addEventListener("visibilitychange", syncPolling);
+  window.addEventListener("pagehide", () => {
+    clearTimeout(timer);
+    controller?.abort();
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) syncPolling();
+  });
   search2.addEventListener("input", update);
   update();
+  syncPolling();
   return update;
 }
 
@@ -4073,4 +4150,9 @@ bindStockSearch({ search, list, status, catalog: stock_catalog_default, select, 
   enter.disabled = true;
 } });
 var previousStatus = new URLSearchParams(location.search).get("status");
-if (previousStatus) status.textContent = previousStatus === "missing" ? "\uC774 \uC885\uBAA9\uC758 \uB4F1\uB77D\uB960\uC744 \uD655\uC778\uD560 \uC218 \uC5C6\uC5B4\uC694." : "\uC2DC\uC138 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.";
+if (previousStatus) {
+  const note = document.createElement("p");
+  note.textContent = previousStatus === "missing" ? "\uC774 \uC885\uBAA9\uC758 \uB4F1\uB77D\uB960\uC744 \uD655\uC778\uD560 \uC218 \uC5C6\uC5B4\uC694." : "\uC2DC\uC138 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.";
+  search.before(note);
+  search.addEventListener("input", () => note.remove(), { once: true });
+}

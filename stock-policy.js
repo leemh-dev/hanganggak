@@ -3940,14 +3940,31 @@ function searchStocks(query = "", sort = "cap", stocks = DEMO_STOCKS) {
   });
 }
 
+// demo/beta-quality-completion/quote-client.mjs
+var quoteOrigin = "https://hanganggak-realtime-demo.onrender.com";
+function stockWithQuote(stock, quote) {
+  if (!stock || quote?.id !== stock.id || quote.mode !== "live" || !Number.isFinite(quote.change) || !(quote.price > 0)) return null;
+  return { ...stock, change: quote.change, quote, map: quote.change < 0 ? "river" : "rooftop" };
+}
+
 // demo/beta-quality-completion/stock-search-ui.mjs
 function bindStockSearch({ search, list, status, catalog, select, onInput = () => {
 } }) {
   const pageSize = 30;
-  let matches = [], shown = 0;
-  function appendResults() {
+  const byCap = searchStocks("", "cap", catalog);
+  const dialog = search.closest("dialog");
+  let matches = [], shown = 0, counts = null, failed = false, selected = false;
+  let controller, timer;
+  const countLabel = (id) => counts ? (counts[id] ?? 0).toLocaleString("ko-KR") + "\uBA85" : failed ? "\uC778\uC6D0 \uBBF8\uD655\uC778" : "\uC778\uC6D0 \uD655\uC778 \uC911";
+  function countBadge(stock) {
+    const badge = document.createElement("span");
+    badge.className = "room-count";
+    badge.textContent = countLabel(stock.id);
+    return badge;
+  }
+  function appendResults(size = pageSize, focusNew = false) {
     const first = shown;
-    const batch = matches.slice(first, first + pageSize);
+    const batch = matches.slice(first, first + size);
     for (const stock of batch) {
       const row = document.createElement("button");
       row.type = "button";
@@ -3963,8 +3980,11 @@ function bindStockSearch({ search, list, status, catalog, select, onInput = () =
         detail.textContent += " \xB7 \uC2DC\uCD1D " + amount + "\uC6D0";
       }
       name.append(detail);
-      row.append(name);
-      row.onclick = () => select(stock);
+      row.append(name, countBadge(stock));
+      row.onclick = () => {
+        selected = true;
+        select(stock);
+      };
       list.append(row);
     }
     shown += batch.length;
@@ -3975,25 +3995,89 @@ function bindStockSearch({ search, list, status, catalog, select, onInput = () =
       more.textContent = "\uACB0\uACFC \uB354 \uBCF4\uAE30";
       more.onclick = () => {
         more.remove();
-        appendResults();
+        appendResults(pageSize, true);
       };
       list.append(more);
     }
-    if (first > 0) list.children[first].focus();
+    if (focusNew && batch.length) list.children[first].focus();
+  }
+  function drawResults(items, keepPosition = false) {
+    const focusedId = list.contains(document.activeElement) ? document.activeElement.dataset.stock : null;
+    const scroll = keepPosition ? list.scrollTop : 0;
+    const size = keepPosition ? Math.max(pageSize, shown) : pageSize;
+    matches = items;
+    shown = 0;
+    list.replaceChildren();
+    list.hidden = !matches.length;
+    appendResults(size);
+    if (keepPosition && focusedId) list.querySelector('[data-stock="' + focusedId + '"]')?.focus({ preventScroll: true });
+    list.scrollTop = scroll;
+  }
+  function updatePopular() {
+    const popular = counts ? byCap.slice().sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0)).slice(0, 10) : [];
+    const same = matches.length === popular.length && matches.every((s, i) => s.id === popular[i].id);
+    if (!same) drawResults(popular, true);
+    const message = counts ? Object.keys(counts).length ? "\uC811\uC18D\uC790\uAC00 \uB9CE\uC740 \uC885\uBAA9" : "\uD604\uC7AC \uC811\uC18D\uC790 0\uBA85 \xB7 \uC2DC\uAC00\uCD1D\uC561\uC21C" : failed ? "\uD604\uC7AC \uC811\uC18D \uC778\uC6D0\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC885\uBAA9 \uAC80\uC0C9\uC740 \uAC00\uB2A5\uD574\uC694." : "\uC811\uC18D \uC778\uC6D0 \uD655\uC778 \uC911\u2026";
+    if (status.textContent !== message) status.textContent = message;
+  }
+  function refreshLabels() {
+    if (selected) return;
+    if (!normalizeSearch(search.value)) updatePopular();
+    for (const badge of list.querySelectorAll(".room-count")) {
+      const label = countLabel(badge.parentElement.dataset.stock);
+      if (badge.textContent !== label) badge.textContent = label;
+    }
   }
   function update() {
+    selected = false;
     onInput();
-    list.replaceChildren();
-    list.scrollTop = 0;
-    shown = 0;
     const query = normalizeSearch(search.value);
-    matches = query ? searchStocks(query, "cap", catalog) : [];
-    list.hidden = matches.length === 0;
-    status.textContent = query ? matches.length ? "\uAC80\uC0C9 \uACB0\uACFC " + matches.length.toLocaleString("ko-KR") + "\uAC1C \xB7 \uC2DC\uAC00\uCD1D\uC561 \uB192\uC740 \uC21C" : "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC5B4\uC694." : "";
-    appendResults();
+    if (!query) {
+      drawResults([]);
+      updatePopular();
+    } else {
+      drawResults(searchStocks(query, "cap", catalog));
+      status.textContent = matches.length ? "\uAC80\uC0C9 \uACB0\uACFC " + matches.length.toLocaleString("ko-KR") + "\uAC1C \xB7 \uC2DC\uAC00\uCD1D\uC561 \uB192\uC740 \uC21C" : "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC5B4\uC694.";
+    }
   }
+  async function refresh() {
+    const request = new AbortController();
+    controller = request;
+    try {
+      const response = await fetch(quoteOrigin + "/rooms/occupancy", { cache: "no-store", signal: AbortSignal.any([request.signal, AbortSignal.timeout(3e4)]) });
+      if (!response.ok) throw Error("occupancy unavailable");
+      const snapshot = await response.json();
+      if (!snapshot.counts || typeof snapshot.counts !== "object") throw Error("invalid occupancy");
+      if (request.signal.aborted) return;
+      counts = snapshot.counts;
+      failed = false;
+    } catch {
+      if (request.signal.aborted) return;
+      counts = null;
+      failed = true;
+    } finally {
+      if (controller === request) controller = null;
+    }
+    refreshLabels();
+    timer = setTimeout(refresh, 15e3);
+  }
+  function syncPolling() {
+    clearTimeout(timer);
+    controller?.abort();
+    if (!document.hidden && (!dialog || dialog.open)) refresh();
+  }
+  if (dialog) new MutationObserver(syncPolling).observe(dialog, { attributes: true, attributeFilter: ["open"] });
+  document.addEventListener("visibilitychange", syncPolling);
+  window.addEventListener("pagehide", () => {
+    clearTimeout(timer);
+    controller?.abort();
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) syncPolling();
+  });
   search.addEventListener("input", update);
   update();
+  syncPolling();
   return update;
 }
 
@@ -4003,13 +4087,6 @@ function stockURL(stock, gender = "male") {
   const map = mapForChange(stock?.change);
   if (!map || !stock?.id) return null;
   return `${map}/?${new URLSearchParams(gender ? { stock: stock.id, gender: gender === "female" ? "female" : "male" } : { stock: stock.id })}`;
-}
-
-// demo/beta-quality-completion/quote-client.mjs
-var quoteOrigin = "https://hanganggak-realtime-demo.onrender.com";
-function stockWithQuote(stock, quote) {
-  if (!stock || quote?.id !== stock.id || quote.mode !== "live" || !Number.isFinite(quote.change) || !(quote.price > 0)) return null;
-  return { ...stock, change: quote.change, quote, map: quote.change < 0 ? "river" : "rooftop" };
 }
 
 // demo/beta-quality-completion/stock-policy.mjs
