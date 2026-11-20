@@ -106,14 +106,10 @@
 #open-chat[data-unread]::after{content:'';position:absolute;right:4px;top:3px;width:10px;height:10px;border:2px solid #173739;border-radius:50%;background:#ffd566}
 
 #room-speech{position:fixed;inset:0;pointer-events:none;z-index:12}
-.speech-bubble{position:absolute;transform:translate(-50%,-100%);max-width:min(200px,44vw);display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:12px;background:#fffff5;color:#172b2b;box-shadow:0 2px 7px #13272755;font:600 14px/1.35 system-ui}
+.speech-bubble{position:absolute;transform:translate(-50%,-100%);max-width:min(200px,44vw);display:flex;padding:5px 10px;border-radius:12px;background:#fffff5;color:#172b2b;box-shadow:0 2px 7px #13272755;font:600 14px/1.35 system-ui}
 .speech-bubble[hidden]{display:none}
 .speech-bubble::after{content:'';position:absolute;top:100%;left:calc(50% - 4px);border:4px solid transparent;border-top-color:#fffff5}
-.speech-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;animation:speech-reveal .55s step-end}
-.speech-dots{color:#476964;animation:speaking-pulse .7s ease-in-out infinite alternate}
-@keyframes speech-reveal{from{max-width:0}to{max-width:200px}}
-@keyframes speaking-pulse{to{opacity:.36}}
-@media(prefers-reduced-motion:reduce){.speech-dots,.speech-text{animation:none}}
+.speech-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (pointer:coarse),(max-width:600px){
  #review-chat{position:fixed;top:max(70px,calc(env(safe-area-inset-top) + 58px));right:max(12px,env(safe-area-inset-right));bottom:auto;width:min(260px,calc(100vw - 24px));max-height:48dvh;overflow:auto;padding:8px}
  #review-chat header strong{display:none}
@@ -214,7 +210,7 @@
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=e8f284d9b0b4b509a8046c081d457ac77017b3b4').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=e8f284d9b0b4b509a8046c081d457ac77017b3b4'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=65082bdfa19c926248b03b926c49435c7dbe692a').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=65082bdfa19c926248b03b926c49435c7dbe692a'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
