@@ -5604,6 +5604,7 @@ function connectPlayRoom(origin, id) {
   const url = new URL("/play/" + encodeURIComponent(id), origin);
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   const players = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
+  let flights = [];
   let population = null, clockOffset = 0;
   function setPopulation(count) {
     if (count === population) return;
@@ -5616,6 +5617,7 @@ function connectPlayRoom(origin, id) {
   }
   function reset() {
     self = null;
+    flights = [];
     setPopulation(null);
     lastPose = "";
     players.clear();
@@ -5636,7 +5638,9 @@ function connectPlayRoom(origin, id) {
     ws.onmessage = (event) => {
       if (socket !== ws) return;
       const m = JSON.parse(event.data);
+      if (m.type === "notice-queue") flights = m.flights;
       if (m.type === "welcome") {
+        flights = m.flights ?? [];
         clockOffset = Number.isFinite(m.serverTime) ? m.serverTime - Date.now() : 0;
         self = { id: m.id, name: m.name, slot: m.slot, entryIndex: m.entryIndex };
         attempt = 0;
@@ -5686,6 +5690,9 @@ function connectPlayRoom(origin, id) {
   });
   return {
     players,
+    get flights() {
+      return flights;
+    },
     get population() {
       return population;
     },
@@ -9850,6 +9857,7 @@ function bindStockSearch({ search, list, status, catalog, select, onInput = () =
   const samples = false ? null : null;
   const tabs = sessionPicker({ search, list, status, stocks: samples, reset: update, initialMarket });
   const currentMarket = () => tabs.active ? markets.US : markets.KR;
+  const usTieOrder = markets.US.some((stock) => Number.isFinite(stock.marketCap)) ? "\uC2DC\uAC00\uCD1D\uC561\uC21C" : "\uD2F0\uCEE4\uC21C";
   const countLabel = (id) => counts ? (counts[id] ?? 0).toLocaleString("ko-KR") + "\uBA85" : failed ? "\uC778\uC6D0 \uBBF8\uD655\uC778" : "\uC778\uC6D0 \uD655\uC778 \uC911";
   function countBadge(stock) {
     const badge = document.createElement("span");
@@ -9924,7 +9932,7 @@ function bindStockSearch({ search, list, status, catalog, select, onInput = () =
     const popular = counts ? currentMarket().slice().sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0)).slice(0, 10) : [];
     const same = matches.length === popular.length && matches.every((s, i) => s.id === popular[i].id);
     if (!same) drawResults(popular, true);
-    const message = counts ? popular.some((s) => counts[s.id] > 0) ? "\uC811\uC18D\uC790\uAC00 \uB9CE\uC740 \uC885\uBAA9" : "\uD604\uC7AC \uC811\uC18D\uC790 0\uBA85 \xB7 \uC2DC\uAC00\uCD1D\uC561\uC21C" : failed ? "\uD604\uC7AC \uC811\uC18D \uC778\uC6D0\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC885\uBAA9 \uAC80\uC0C9\uC740 \uAC00\uB2A5\uD574\uC694." : "\uC811\uC18D \uC778\uC6D0 \uD655\uC778 \uC911\u2026";
+    const message = counts ? popular.some((s) => counts[s.id] > 0) ? "\uC811\uC18D\uC790\uAC00 \uB9CE\uC740 \uC885\uBAA9" : "\uD604\uC7AC \uC811\uC18D\uC790 0\uBA85 \xB7 " + (tabs.active ? usTieOrder : "\uC2DC\uAC00\uCD1D\uC561\uC21C") : failed ? "\uD604\uC7AC \uC811\uC18D \uC778\uC6D0\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC885\uBAA9 \uAC80\uC0C9\uC740 \uAC00\uB2A5\uD574\uC694." : "\uC811\uC18D \uC778\uC6D0 \uD655\uC778 \uC911\u2026";
     if (status.textContent !== message) status.textContent = message;
   }
   function refreshLabels() {
@@ -10009,7 +10017,13 @@ function ensureStockRoute() {
   const stock = full_catalog_default.find((item) => item.id === params.get("stock"));
   const home = new URL("../", location.href);
   function exit(reason) {
-    if (reason) home.searchParams.set("status", reason);
+    if (reason) {
+      home.searchParams.set("status", reason);
+      if (stock?.ticker) {
+        home.searchParams.set("market", "US");
+        home.searchParams.set("ticker", stock.ticker);
+      }
+    }
     location.replace(home);
   }
   if (!stock) {

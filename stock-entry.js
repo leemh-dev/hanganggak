@@ -9741,6 +9741,7 @@ function bindStockSearch({ search: search2, list: list2, status: status2, catalo
   const samples = false ? null : null;
   const tabs = sessionPicker({ search: search2, list: list2, status: status2, stocks: samples, reset: update, initialMarket });
   const currentMarket = () => tabs.active ? markets.US : markets.KR;
+  const usTieOrder = markets.US.some((stock) => Number.isFinite(stock.marketCap)) ? "\uC2DC\uAC00\uCD1D\uC561\uC21C" : "\uD2F0\uCEE4\uC21C";
   const countLabel = (id) => counts ? (counts[id] ?? 0).toLocaleString("ko-KR") + "\uBA85" : failed ? "\uC778\uC6D0 \uBBF8\uD655\uC778" : "\uC778\uC6D0 \uD655\uC778 \uC911";
   function countBadge(stock) {
     const badge = document.createElement("span");
@@ -9815,7 +9816,7 @@ function bindStockSearch({ search: search2, list: list2, status: status2, catalo
     const popular = counts ? currentMarket().slice().sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0)).slice(0, 10) : [];
     const same = matches.length === popular.length && matches.every((s, i) => s.id === popular[i].id);
     if (!same) drawResults(popular, true);
-    const message = counts ? popular.some((s) => counts[s.id] > 0) ? "\uC811\uC18D\uC790\uAC00 \uB9CE\uC740 \uC885\uBAA9" : "\uD604\uC7AC \uC811\uC18D\uC790 0\uBA85 \xB7 \uC2DC\uAC00\uCD1D\uC561\uC21C" : failed ? "\uD604\uC7AC \uC811\uC18D \uC778\uC6D0\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC885\uBAA9 \uAC80\uC0C9\uC740 \uAC00\uB2A5\uD574\uC694." : "\uC811\uC18D \uC778\uC6D0 \uD655\uC778 \uC911\u2026";
+    const message = counts ? popular.some((s) => counts[s.id] > 0) ? "\uC811\uC18D\uC790\uAC00 \uB9CE\uC740 \uC885\uBAA9" : "\uD604\uC7AC \uC811\uC18D\uC790 0\uBA85 \xB7 " + (tabs.active ? usTieOrder : "\uC2DC\uAC00\uCD1D\uC561\uC21C") : failed ? "\uD604\uC7AC \uC811\uC18D \uC778\uC6D0\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC885\uBAA9 \uAC80\uC0C9\uC740 \uAC00\uB2A5\uD574\uC694." : "\uC811\uC18D \uC778\uC6D0 \uD655\uC778 \uC911\u2026";
     if (status2.textContent !== message) status2.textContent = message;
   }
   function refreshLabels() {
