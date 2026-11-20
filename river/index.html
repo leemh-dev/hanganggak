@@ -121,6 +121,17 @@
  #review-chat #review-log{max-height:10dvh;margin:4px 0}
  #review-chat #review-send input{flex:1;width:0}
 }
+
+#bar-order {box-sizing:border-box;width:min(22rem,calc(100vw - 2rem));border:1px solid #80938c;border-radius:18px;padding:18px;color:#fcf7e9;background:#193331;box-shadow:0 14px 50px #061b2060}
+#bar-order::backdrop {background:#10212348}
+#bar-order header {display:flex;align-items:center;justify-content:space-between;gap:12px}
+#bar-order h2 {margin:0;font:650 1.18rem system-ui}
+#bar-order button {min-height:44px;border:1px solid #49605c;border-radius:11px;background:#26423e;color:inherit;font:inherit;cursor:pointer}
+#bar-order button:focus-visible {outline:2px solid #f3cb86;outline-offset:2px}
+#bar-order header button {background:transparent;border:0;width:44px;font-size:1.4rem}
+.bar-choices {display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.bar-choices button {display:grid;place-items:center;gap:5px;padding:12px 3px}
+.bar-choices span {font-size:1.65rem}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -186,7 +197,7 @@
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=b71030a51b1f0d03282eaef81f1ac9519673d09c').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=b71030a51b1f0d03282eaef81f1ac9519673d09c'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=965a16a4ef74729756607f213bfbb90472651c5f').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=965a16a4ef74729756607f213bfbb90472651c5f'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
