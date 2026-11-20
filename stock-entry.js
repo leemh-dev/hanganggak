@@ -3950,6 +3950,73 @@ function quoteDisplay(q) {
   return { price: valid ? usd2 ? q.price.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 4 }) : `${q.price.toLocaleString("ko-KR")}\uC6D0` : "\uC2DC\uC138 \uC5C6\uC74C", change: valid ? signed(q.change) : "", status: `${q.source ?? "\uB124\uC774\uBC84 \uC6F9"} \xB7 ${labels[q.status] ?? labels.unknown}`, time: `${traded} \xB7 ${q.fetchedAt ? (usd2 ? "\uC11C\uC6B8 \uC870\uD68C " : "\uC870\uD68C ") + time(q.fetchedAt) : "\uC815\uC0C1 \uC870\uD68C \uC5C6\uC74C"}` };
 }
 
+// demo/beta-quality-completion/us-quote-dialog.mjs
+var exchanges = /* @__PURE__ */ new Map([
+  ["NASDAQ", "NASDAQ"],
+  ["NYSE", "NYSE"],
+  ["NYSE Arca", "AMEX"],
+  ["NYSE American", "AMEX"],
+  ["Cboe BZX", "CBOE"]
+]);
+function externalLink(text, url) {
+  const link = document.createElement("a");
+  link.textContent = text;
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  return link;
+}
+function showUSQuote(stock, destination) {
+  const dialog = document.createElement("dialog");
+  dialog.className = "us-quote-sheet";
+  dialog.setAttribute("aria-labelledby", "us-quote-title");
+  const header = document.createElement("header");
+  const title = document.createElement("h2");
+  title.id = "us-quote-title";
+  title.textContent = stock.name;
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "\uB2EB\uAE30";
+  close.onclick = () => dialog.close();
+  header.append(title, close);
+  const listing = document.createElement("p");
+  listing.textContent = [stock.ticker, stock.market, stock.type === "ETF" ? "ETF" : "\uC8FC\uC2DD"].join(" \xB7 ");
+  dialog.append(header, listing);
+  const exchange = exchanges.get(stock.market);
+  if (exchange) {
+    const url = new URL("https://www.tradingview-widget.com/embed-widget/single-quote/");
+    url.searchParams.set("locale", "kr");
+    url.hash = encodeURIComponent(JSON.stringify({
+      symbol: exchange + ":" + stock.ticker,
+      colorTheme: "dark",
+      isTransparent: false,
+      width: "100%",
+      "page-uri": location.origin + location.pathname
+    }));
+    const widget = document.createElement("iframe");
+    widget.title = stock.ticker + " \uAC00\uACA9\uACFC \uB4F1\uB77D\uB960";
+    widget.src = url.href;
+    const attribution = externalLink(
+      "TradingView\uC5D0\uC11C \uBCF4\uAE30 \u2197",
+      "https://www.tradingview.com/symbols/" + exchange + "-" + encodeURIComponent(stock.ticker) + "/"
+    );
+    attribution.className = "quote-provider";
+    dialog.append(widget, attribution);
+  }
+  const naver = externalLink(destination.label + " \u2197", destination.url);
+  naver.className = "quote-naver";
+  dialog.append(naver);
+  dialog.addEventListener("close", () => dialog.remove(), { once: true });
+  dialog.addEventListener("keydown", (event) => event.stopPropagation());
+  dialog.addEventListener("click", (event) => {
+    if (event.target !== dialog) return;
+    const bounds = dialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+  });
+  document.body.append(dialog);
+  dialog.showModal();
+}
+
 // demo/beta-quality-completion/naver-symbol-links.json
 var naver_symbol_links_default = {
   A: "A",
@@ -9686,12 +9753,8 @@ function bindStockSearch({ search: search2, list: list2, status: status2, catalo
     const batch = matches.slice(first, first + size);
     for (const stock of batch) {
       const destination = naverUSWeb && stock.ticker ? naverDestination(stock) : null;
-      const row = document.createElement(destination ? "a" : "button");
-      if (destination) {
-        row.href = destination.url;
-        row.target = "_blank";
-        row.rel = "noopener noreferrer";
-      } else row.type = "button";
+      const row = document.createElement("button");
+      row.type = "button";
       row.className = "stock-row";
       row.dataset.stock = stock.id;
       const name = document.createElement("span");
@@ -9709,7 +9772,9 @@ function bindStockSearch({ search: search2, list: list2, status: status2, catalo
       if (destination) {
         const linkLabel = document.createElement("span");
         linkLabel.className = "web-quote";
-        linkLabel.textContent = destination.label + " \u2197";
+        linkLabel.textContent = "\uC2DC\uC138 \uBCF4\uAE30";
+        row.setAttribute("aria-haspopup", "dialog");
+        row.onclick = () => showUSQuote(stock, destination);
         row.append(linkLabel);
       } else {
         row.append(countBadge(stock));
@@ -9772,7 +9837,7 @@ function bindStockSearch({ search: search2, list: list2, status: status2, catalo
     const query = normalizeSearch(search2.value);
     if (!query) {
       drawResults([]);
-      if (external) status2.textContent = "\uBBF8\uAD6D \uC885\uBAA9\uC744 \uAC80\uC0C9\uD558\uBA74 \uB124\uC774\uBC84\uC5D0\uC11C \uC2DC\uC138\uB97C \uBCFC \uC218 \uC788\uC5B4\uC694.";
+      if (external) status2.textContent = "\uBBF8\uAD6D \uC885\uBAA9\uBA85\uC774\uB098 \uD2F0\uCEE4\uB97C \uC785\uB825\uD574 \uC2DC\uC138\uB97C \uD655\uC778\uD558\uC138\uC694.";
       else updatePopular();
     } else {
       drawResults(searchStocks(query, "cap", currentMarket()));
