@@ -3945,9 +3945,12 @@ function quoteDisplay(q) {
   const labels = { open: "\uC7A5\uC911", closed: "\uB9C8\uAC10", holiday: "\uD734\uC7A5", delayed: "\uC2DC\uC138 \uC9C0\uC5F0 \xB7 \uB9C8\uC9C0\uB9C9 \uD655\uC778\uAC12", failed: "\uC218\uC9D1 \uC2E4\uD328 \xB7 \uB9C8\uC9C0\uB9C9 \uC815\uC0C1\uAC12", unavailable: "\uC2DC\uC138 \uC5C6\uC74C", unknown: "\uC7A5\uC0C1\uD0DC \uBBF8\uD655\uC778" };
   const time = (value, zone = "Asia/Seoul") => value ? new Date(value).toLocaleString("ko-KR", { timeZone: zone, month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : null;
   const usd2 = q.currency === "USD";
+  const sessionLabels = { pre: "\uD504\uB9AC\uC7A5", regular: "\uC815\uADDC\uC7A5", post: "\uC560\uD504\uD130\uC7A5" };
+  const market = usd2 ? sessionLabels[q.session] : q.source ?? "\uB124\uC774\uBC84 \uC6F9";
+  const status2 = [market, labels[q.status] ?? labels.unknown].filter(Boolean).join(" \xB7 ");
   const traded = q.quoteAt ? usd2 ? "\uBBF8 \uB3D9\uBD80 " + time(q.quoteAt, "America/New_York") : "\uC2DC\uC138 " + time(q.quoteAt) : "\uC2DC\uC138 \uC2DC\uAC01 \uBBF8\uC81C\uACF5";
   const valid = Number.isFinite(q.price) && Number.isFinite(q.change);
-  return { price: valid ? usd2 ? q.price.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 4 }) : `${q.price.toLocaleString("ko-KR")}\uC6D0` : "\uC2DC\uC138 \uC5C6\uC74C", change: valid ? signed(q.change) : "", status: `${q.source ?? "\uB124\uC774\uBC84 \uC6F9"} \xB7 ${labels[q.status] ?? labels.unknown}`, time: `${traded} \xB7 ${q.fetchedAt ? (usd2 ? "\uC11C\uC6B8 \uC870\uD68C " : "\uC870\uD68C ") + time(q.fetchedAt) : "\uC815\uC0C1 \uC870\uD68C \uC5C6\uC74C"}` };
+  return { price: valid ? usd2 ? q.price.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 4 }) : `${q.price.toLocaleString("ko-KR")}\uC6D0` : "\uC2DC\uC138 \uC5C6\uC74C", change: valid ? signed(q.change) : "", status: status2, time: `${traded} \xB7 ${q.fetchedAt ? (usd2 ? "\uC11C\uC6B8 \uC870\uD68C " : "\uC870\uD68C ") + time(q.fetchedAt) : "\uC815\uC0C1 \uC870\uD68C \uC5C6\uC74C"}` };
 }
 
 // demo/beta-quality-completion/us-quote-dialog.mjs

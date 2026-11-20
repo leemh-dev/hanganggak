@@ -1,7 +1,7 @@
 {
-  "commit": "a795158cbdd173991bd31553622982ceda93387f",
+  "commit": "a35f45e5c532ad72ae8aa4d256e84172f5001a5d",
   "usMode": "stock-rooms",
-  "builtAt": "2026-11-20T12:46:26.118Z",
+  "builtAt": "2026-11-20T13:24:46.978Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
