@@ -3,12 +3,19 @@ function connectPlayRoom(origin, id) {
   const url = new URL("/play/" + encodeURIComponent(id), origin);
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   const players = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
+  let population = null;
+  function setPopulation(count) {
+    if (count === population) return;
+    population = count;
+    window.dispatchEvent(new Event("room-population"));
+  }
   let socket = null, self = null, entered = false, paused = false, retry, attempt = 0, sequence = 0, lastPose = "";
   function status() {
     window.dispatchEvent(new Event("room-chat-status"));
   }
   function reset() {
     self = null;
+    setPopulation(null);
     lastPose = "";
     players.clear();
     for (const item of pending.values()) {
@@ -29,11 +36,12 @@ function connectPlayRoom(origin, id) {
       if (socket !== ws) return;
       const m = JSON.parse(event.data);
       if (m.type === "welcome") {
-        self = { id: m.id, name: m.name, slot: m.slot };
+        self = { id: m.id, name: m.name, slot: m.slot, entryIndex: m.entryIndex };
         attempt = 0;
         receive(m.players);
         status();
       }
+      if (m.type === "population" && Number.isSafeInteger(m.count) && m.count > 0) setPopulation(m.count);
       if (m.type === "players") receive(m.players);
       if (m.type === "leave") players.delete(m.id);
       if (m.type === "chat" && m.room === id) window.dispatchEvent(new CustomEvent("room-chat", { detail: m }));
@@ -76,6 +84,9 @@ function connectPlayRoom(origin, id) {
   });
   return {
     players,
+    get population() {
+      return population;
+    },
     get self() {
       return self;
     },
