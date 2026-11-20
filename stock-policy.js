@@ -1,3 +1,113 @@
+// demo/beta-quality-completion/play-connection.mjs
+function connectPlayRoom(origin, id) {
+  const url = new URL("/play/" + encodeURIComponent(id), origin);
+  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+  const players = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
+  let socket = null, self = null, entered = false, paused = false, retry, attempt = 0, sequence = 0, lastPose = "";
+  function status() {
+    window.dispatchEvent(new Event("room-chat-status"));
+  }
+  function reset() {
+    self = null;
+    lastPose = "";
+    players.clear();
+    for (const item of pending.values()) {
+      clearTimeout(item.timer);
+      item.reject(Error("\uC5F0\uACB0\uC774 \uB04A\uACA8 \uC804\uC1A1\uC744 \uD655\uC778\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694."));
+    }
+    pending.clear();
+    status();
+  }
+  function receive(group) {
+    for (const player of group) if (player.id !== self?.id) players.set(player.id, player);
+  }
+  function open() {
+    if (!entered || paused || socket || document.hidden) return;
+    const ws = new WebSocket(url);
+    socket = ws;
+    ws.onmessage = (event) => {
+      if (socket !== ws) return;
+      const m = JSON.parse(event.data);
+      if (m.type === "welcome") {
+        self = { id: m.id, name: m.name, slot: m.slot };
+        attempt = 0;
+        receive(m.players);
+        status();
+      }
+      if (m.type === "players") receive(m.players);
+      if (m.type === "leave") players.delete(m.id);
+      if (m.type === "chat" && m.room === id) window.dispatchEvent(new CustomEvent("room-chat", { detail: m }));
+      if (m.type === "receipt") {
+        const item = pending.get(m.request);
+        if (!item) return;
+        clearTimeout(item.timer);
+        pending.delete(m.request);
+        if (m.error) item.reject(Error(m.error));
+        else item.resolve();
+      }
+    };
+    ws.onclose = () => {
+      if (socket !== ws) return;
+      socket = null;
+      reset();
+      clearTimeout(retry);
+      retry = setTimeout(open, Math.min(8e3, 500 * 2 ** Math.min(4, attempt++)));
+    };
+  }
+  function suspend() {
+    paused = true;
+    clearTimeout(retry);
+    const ws = socket;
+    socket = null;
+    ws?.close();
+    reset();
+  }
+  window.addEventListener("stock-room-entered", () => {
+    entered = true;
+    open();
+  });
+  window.addEventListener("pagehide", suspend);
+  window.addEventListener("pageshow", () => {
+    paused = false;
+    open();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) open();
+  });
+  return {
+    players,
+    get self() {
+      return self;
+    },
+    get connected() {
+      return !!self && socket?.readyState === WebSocket.OPEN;
+    },
+    get name() {
+      return self?.name;
+    },
+    pose(pose) {
+      if (!this.connected || socket.bufferedAmount > 8192) return;
+      const data = JSON.stringify({ type: "pose", pose });
+      if (data !== lastPose) {
+        socket.send(data);
+        lastPose = data;
+      }
+    },
+    send(text) {
+      if (!this.connected) return Promise.reject(Error("\uC885\uBAA9\uBC29\uC5D0 \uB2E4\uC2DC \uC5F0\uACB0 \uC911\uC774\uC5D0\uC694."));
+      const request = ++sequence;
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+          pending.delete(request);
+          reject(Error("\uC804\uC1A1 \uD655\uC778\uC774 \uB2A6\uC5B4\uC9C0\uACE0 \uC788\uC5B4\uC694. \uCC44\uD305 \uBAA9\uB85D\uC744 \uD655\uC778\uD574 \uC8FC\uC138\uC694."));
+        }, 8e3);
+        pending.set(request, { resolve, reject, timer });
+        socket.send(JSON.stringify({ type: "chat", request, text }));
+      });
+    }
+  };
+}
+
 // demo/shared/stock-catalog.json
 var stock_catalog_default = [
   { id: "000020", name: "\uB3D9\uD654\uC57D\uD488", market: "KOSPI", type: "STOCK", marketCap: 1386 },
@@ -4137,11 +4247,7 @@ function ensureStockRoute() {
   }
   return new Promise((resolve) => {
     let stream, joined = false, playing = false;
-    let membership = null;
-    function setMembership(value) {
-      membership = value;
-      window.dispatchEvent(new Event("room-chat-status"));
-    }
+    const room = connectPlayRoom(quoteOrigin, stock.id);
     async function request(path, body, token) {
       const headers = {};
       if (body) headers["Content-Type"] = "application/json";
@@ -4151,21 +4257,11 @@ function ensureStockRoute() {
       if (!response.ok) throw Error(result.error ?? "\uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.");
       return result;
     }
-    window.hanganggakCommunity = {
-      get connected() {
-        return !!membership;
-      },
-      get name() {
-        return membership?.name;
-      },
-      send(text) {
-        if (!membership) throw Error("\uCC44\uD305\uC744 \uC5F0\uACB0 \uC911\uC774\uC5D0\uC694.");
-        return request("/chat/" + stock.id, { text }, membership.token);
-      },
+    window.hanganggakCommunity = Object.assign(room, {
       reportStatus: () => request("/reports/status"),
       reportCode: (email, text) => request("/reports/code", { email, text, room: stock.id }),
       reportSubmit: (id, code) => request("/reports/submit", { id, code })
-    };
+    });
     const timeout = setTimeout(() => {
       if (!joined) {
         close();
@@ -4176,7 +4272,6 @@ function ensureStockRoute() {
     function close() {
       stream?.close();
       stream = null;
-      setMembership(null);
     }
     function publish(selected) {
       window.hanganggakEntryStock = selected;
@@ -4184,17 +4279,8 @@ function ensureStockRoute() {
     }
     function connect() {
       if (stream || document.hidden || joined && !playing) return;
-      stream = new EventSource(quoteOrigin + "/quotes/" + encodeURIComponent(stock.id) + "/events" + (playing ? "?room=1" : ""));
+      stream = new EventSource(quoteOrigin + "/quotes/" + encodeURIComponent(stock.id) + "/events");
       const source = stream;
-      source.addEventListener("membership", (e) => {
-        if (stream === source && playing) setMembership(JSON.parse(e.data));
-      });
-      source.addEventListener("chat", (e) => {
-        if (stream === source && membership) {
-          const m = JSON.parse(e.data);
-          if (m.room === stock.id) window.dispatchEvent(new CustomEvent("room-chat", { detail: m }));
-        }
-      });
       stream.onmessage = (event) => {
         let quote;
         try {
@@ -4211,7 +4297,7 @@ function ensureStockRoute() {
           return;
         }
         const destination = new URL(stockURL(selected, params.get("gender")), home);
-        if (params.get("enter") === "1") destination.searchParams.set("enter", "1");
+        if (playing || params.get("enter") === "1") destination.searchParams.set("enter", "1");
         if (destination.pathname !== location.pathname) {
           close();
           location.replace(destination);
@@ -4225,7 +4311,6 @@ function ensureStockRoute() {
       };
       stream.onerror = () => {
         if (stream !== source) return;
-        setMembership(null);
         const last = window.hanganggakEntryStock;
         if (last) publish({ ...last, quote: { ...last.quote, status: "failed" } });
       };
