@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>한강각 · 제보 인증</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#142e34;color:#f1f6f2;font:16px/1.5 system-ui}main{max-width:25rem;margin:10vh auto;padding:1.5rem}h1{font-size:1.5rem}label,input,button{display:block}input,button{width:100%;font:inherit;padding:.75rem;border-radius:.6rem}input{margin:.5rem 0 1rem;background:#203f46;color:white;border:1px solid #9ab2ae}button{background:#dce9da;color:#162f31;border:0;font-weight:700}button:disabled{opacity:.65}
+</style>
+<main><h1>한강각 제보 인증</h1><form><label for="code">이메일로 받은 6자리 코드</label><input id="code" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" required><button>인증하고 비공개 이슈 접수</button></form><p role="status"></p></main>
+<script type="module" src="./report-confirm.js"></script>
+</html>
