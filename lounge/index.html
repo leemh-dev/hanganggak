@@ -99,6 +99,8 @@
 #report-submit{background:#dce9da;color:#162f31;font-weight:700}
 
 #open-chat[data-unread]::after{content:'';position:absolute;right:4px;top:3px;width:10px;height:10px;border:2px solid #173739;border-radius:50%;background:#ffd566}
+
+#scene.mouse-look::after{content:'';position:absolute;left:50%;top:50%;width:4px;height:4px;transform:translate(-50%,-50%);border-radius:50%;background:white;box-shadow:0 0 0 1px #26363c;pointer-events:none}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -164,7 +166,7 @@
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=25fac24c7b4c5d957d4753d9dc56dc1aef749f00').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=25fac24c7b4c5d957d4753d9dc56dc1aef749f00'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=0d8d5d30d81dcc8377c49a9d3223ad10fc6eb668').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=0d8d5d30d81dcc8377c49a9d3223ad10fc6eb668'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
