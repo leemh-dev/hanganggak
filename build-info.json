@@ -1,12 +1,17 @@
 {
-  "commit": "f4477d3b7bfa427829d3b567569cff8a66b70c52",
-  "builtAt": "2026-11-20T05:07:26.775Z",
+  "commit": "3528cb952891bf46a6eb1ff1756cbea2a67b2cdb",
+  "builtAt": "2026-11-20T06:37:56.329Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
       "path": "river/mobile-world.glb",
-      "bytes": 12158860,
-      "sha256": "d9506c0ef6b00518eac44b2db819b43b755f12c2b577311f4765f78234f451b7"
+      "bytes": 12199580,
+      "sha256": "1f2b529ebd4d8cb178476a3fd413e5cbe247b9d060322e55f66d2dc686ec3e66"
+    },
+    {
+      "path": "river/anteater.glb",
+      "bytes": 1815972,
+      "sha256": "6d9071a44d85ca6c1fcdfd67f89770ecfec16cbcddc7dc131a39c34b8f715cf9"
     },
     {
       "path": "river/clerk.glb",
@@ -35,8 +40,8 @@
     },
     {
       "path": "river/world.json",
-      "bytes": 24237,
-      "sha256": "18252e8ebb37fe05bd4cea9721b43c72ebb49213b3bba9eb38e23ffc2c046a85"
+      "bytes": 24145,
+      "sha256": "ddf7a288dcd1c8ee82644be2e36e902db12b1b9ecdb38ed447461ef886f0df33"
     },
     {
       "path": "river/policy.json",
@@ -45,8 +50,8 @@
     },
     {
       "path": "river/river-world.json",
-      "bytes": 24237,
-      "sha256": "18252e8ebb37fe05bd4cea9721b43c72ebb49213b3bba9eb38e23ffc2c046a85"
+      "bytes": 24145,
+      "sha256": "ddf7a288dcd1c8ee82644be2e36e902db12b1b9ecdb38ed447461ef886f0df33"
     },
     {
       "path": "river/river-policy.json",
@@ -55,8 +60,8 @@
     },
     {
       "path": "river/river.glb",
-      "bytes": 28080348,
-      "sha256": "27ba3d79900e2def3f5d25d16cd27c9e5bdf75c7217830a3214596eb796b24d7"
+      "bytes": 28121072,
+      "sha256": "e920df9b838fb0cd76171713cc011e3cc62226cca7373bd46f7a08776c787a33"
     },
     {
       "path": "river/sky.exr",
@@ -77,6 +82,11 @@
       "path": "lounge/mobile-world.glb",
       "bytes": 23523504,
       "sha256": "240ffbac7967f7f191e764f0a2bf98c3858149a166bf0dd93b5124302ced2cee"
+    },
+    {
+      "path": "lounge/bull.glb",
+      "bytes": 1083536,
+      "sha256": "c82f60295fdca0c5d83a492da09bbb46a03a4beb078aa95ff6494ea6eac0773d"
     },
     {
       "path": "lounge/bartender.glb",
@@ -100,8 +110,8 @@
     },
     {
       "path": "lounge/world.json",
-      "bytes": 142601,
-      "sha256": "8ed7594bc42790d3b2d2055106a0eddd7d13066bb93555d541d9a7de6bb4518a"
+      "bytes": 142748,
+      "sha256": "2179f89e20040851e0b91e589e355b94e4a3e477b15ac485546f5ca6476df7d5"
     },
     {
       "path": "lounge/policy.json",
@@ -110,8 +120,8 @@
     },
     {
       "path": "lounge/river-world.json",
-      "bytes": 24237,
-      "sha256": "18252e8ebb37fe05bd4cea9721b43c72ebb49213b3bba9eb38e23ffc2c046a85"
+      "bytes": 24145,
+      "sha256": "ddf7a288dcd1c8ee82644be2e36e902db12b1b9ecdb38ed447461ef886f0df33"
     },
     {
       "path": "lounge/river-policy.json",
