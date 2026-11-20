@@ -9653,6 +9653,73 @@ var us_stock_catalog_default = [{ id: "US-A", ticker: "A", name: "\uC560\uC9C8\u
 // demo/shared/full-catalog.mjs
 var full_catalog_default = [...stock_catalog_default, ...us_stock_catalog_default];
 
+// demo/beta-quality-completion/us-quote-dialog.mjs
+var exchanges = /* @__PURE__ */ new Map([
+  ["NASDAQ", "NASDAQ"],
+  ["NYSE", "NYSE"],
+  ["NYSE Arca", "AMEX"],
+  ["NYSE American", "AMEX"],
+  ["Cboe BZX", "CBOE"]
+]);
+function externalLink(text, url) {
+  const link = document.createElement("a");
+  link.textContent = text;
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  return link;
+}
+function showUSQuote(stock, destination) {
+  const dialog = document.createElement("dialog");
+  dialog.className = "us-quote-sheet";
+  dialog.setAttribute("aria-labelledby", "us-quote-title");
+  const header = document.createElement("header");
+  const title = document.createElement("h2");
+  title.id = "us-quote-title";
+  title.textContent = stock.name;
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "\uB2EB\uAE30";
+  close.onclick = () => dialog.close();
+  header.append(title, close);
+  const listing = document.createElement("p");
+  listing.textContent = [stock.ticker, stock.market, stock.type === "ETF" ? "ETF" : "\uC8FC\uC2DD"].join(" \xB7 ");
+  dialog.append(header, listing);
+  const exchange = exchanges.get(stock.market);
+  if (exchange) {
+    const url = new URL("https://www.tradingview-widget.com/embed-widget/single-quote/");
+    url.searchParams.set("locale", "kr");
+    url.hash = encodeURIComponent(JSON.stringify({
+      symbol: exchange + ":" + stock.ticker,
+      colorTheme: "dark",
+      isTransparent: false,
+      width: "100%",
+      "page-uri": location.origin + location.pathname
+    }));
+    const widget = document.createElement("iframe");
+    widget.title = stock.ticker + " \uAC00\uACA9\uACFC \uB4F1\uB77D\uB960";
+    widget.src = url.href;
+    const attribution = externalLink(
+      "TradingView\uC5D0\uC11C \uBCF4\uAE30 \u2197",
+      "https://www.tradingview.com/symbols/" + exchange + "-" + encodeURIComponent(stock.ticker) + "/"
+    );
+    attribution.className = "quote-provider";
+    dialog.append(widget, attribution);
+  }
+  const naver = externalLink(destination.label + " \u2197", destination.url);
+  naver.className = "quote-naver";
+  dialog.append(naver);
+  dialog.addEventListener("close", () => dialog.remove(), { once: true });
+  dialog.addEventListener("keydown", (event) => event.stopPropagation());
+  dialog.addEventListener("click", (event) => {
+    if (event.target !== dialog) return;
+    const bounds = dialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+  });
+  document.body.append(dialog);
+  dialog.showModal();
+}
+
 // demo/shared/demo-stocks.mjs
 var MARKET_CAP_SNAPSHOT = Object.freeze({ "asOf": "2026-11-10", "asOfTime": "2026-11-10 15:10+09:00", "unit": "\uC5B5\uC6D0", "sourceUrl": "https://stockgo.kr/market", "sourceLabel": "\uC8FC\uC2DD\uC54C\uB77C\uBBF8 \uC2DC\uAC00\uCD1D\uC561 \uD45C", "fetchedAt": "2026-11-10T06:15:41.669707+00:00" });
 var DEMO_STOCKS = Object.freeze([{ "id": "005930", "name": "\uC0BC\uC131\uC804\uC790", "market": "KOSPI", "change": 1.2, "map": "rooftop", "marketCap": 11669172 }, { "id": "000660", "name": "SK\uD558\uC774\uB2C9\uC2A4", "market": "KOSPI", "change": 2.4, "map": "rooftop", "marketCap": 8933921 }, { "id": "035420", "name": "NAVER", "market": "KOSPI", "change": -1.3, "map": "river", "marketCap": 294330 }, { "id": "009150", "name": "\uC0BC\uC131\uC804\uAE30", "market": "KOSPI", "change": 0.8, "map": "rooftop", "marketCap": 659545 }, { "id": "010140", "name": "\uC0BC\uC131\uC911\uACF5\uC5C5", "market": "KOSPI", "change": -0.7, "map": "river", "marketCap": 144408 }, { "id": "005380", "name": "\uD604\uB300\uCC28", "market": "KOSPI", "change": 1.1, "map": "rooftop", "marketCap": 559532 }, { "id": "000270", "name": "\uAE30\uC544", "market": "KOSPI", "change": -0.6, "map": "river", "marketCap": 375186 }, { "id": "373220", "name": "LG\uC5D0\uB108\uC9C0\uC194\uB8E8\uC158", "market": "KOSPI", "change": 1.5, "map": "rooftop", "marketCap": 776880 }, { "id": "207940", "name": "\uC0BC\uC131\uBC14\uC774\uC624\uB85C\uC9C1\uC2A4", "market": "KOSPI", "change": -1, "map": "river", "marketCap": 678162 }, { "id": "105560", "name": "KB\uAE08\uC735", "market": "KOSPI", "change": 0.4, "map": "rooftop", "marketCap": 541253 }].map((stock) => {
@@ -9795,12 +9862,8 @@ function bindStockSearch({ search, list, status, catalog, select, onInput = () =
     const batch = matches.slice(first, first + size);
     for (const stock of batch) {
       const destination = naverUSWeb && stock.ticker ? naverDestination(stock) : null;
-      const row = document.createElement(destination ? "a" : "button");
-      if (destination) {
-        row.href = destination.url;
-        row.target = "_blank";
-        row.rel = "noopener noreferrer";
-      } else row.type = "button";
+      const row = document.createElement("button");
+      row.type = "button";
       row.className = "stock-row";
       row.dataset.stock = stock.id;
       const name = document.createElement("span");
@@ -9818,7 +9881,9 @@ function bindStockSearch({ search, list, status, catalog, select, onInput = () =
       if (destination) {
         const linkLabel = document.createElement("span");
         linkLabel.className = "web-quote";
-        linkLabel.textContent = destination.label + " \u2197";
+        linkLabel.textContent = "\uC2DC\uC138 \uBCF4\uAE30";
+        row.setAttribute("aria-haspopup", "dialog");
+        row.onclick = () => showUSQuote(stock, destination);
         row.append(linkLabel);
       } else {
         row.append(countBadge(stock));
@@ -9881,7 +9946,7 @@ function bindStockSearch({ search, list, status, catalog, select, onInput = () =
     const query = normalizeSearch(search.value);
     if (!query) {
       drawResults([]);
-      if (external) status.textContent = "\uBBF8\uAD6D \uC885\uBAA9\uC744 \uAC80\uC0C9\uD558\uBA74 \uB124\uC774\uBC84\uC5D0\uC11C \uC2DC\uC138\uB97C \uBCFC \uC218 \uC788\uC5B4\uC694.";
+      if (external) status.textContent = "\uBBF8\uAD6D \uC885\uBAA9\uBA85\uC774\uB098 \uD2F0\uCEE4\uB97C \uC785\uB825\uD574 \uC2DC\uC138\uB97C \uD655\uC778\uD558\uC138\uC694.";
       else updatePopular();
     } else {
       drawResults(searchStocks(query, "cap", currentMarket()));
