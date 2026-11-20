@@ -104,6 +104,23 @@
 #report-submit{background:#dce9da;color:#162f31;font-weight:700}
 
 #open-chat[data-unread]::after{content:'';position:absolute;right:4px;top:3px;width:10px;height:10px;border:2px solid #173739;border-radius:50%;background:#ffd566}
+
+#room-speech{position:fixed;inset:0;pointer-events:none;z-index:12}
+.speech-bubble{position:absolute;transform:translate(-50%,-100%);max-width:min(200px,44vw);display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:12px;background:#fffff5;color:#172b2b;box-shadow:0 2px 7px #13272755;font:600 14px/1.35 system-ui}
+.speech-bubble[hidden]{display:none}
+.speech-bubble::after{content:'';position:absolute;top:100%;left:calc(50% - 4px);border:4px solid transparent;border-top-color:#fffff5}
+.speech-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;animation:speech-reveal .55s step-end}
+.speech-dots{color:#476964;animation:speaking-pulse .7s ease-in-out infinite alternate}
+@keyframes speech-reveal{from{max-width:0}to{max-width:200px}}
+@keyframes speaking-pulse{to{opacity:.36}}
+@media(prefers-reduced-motion:reduce){.speech-dots,.speech-text{animation:none}}
+@media (pointer:coarse),(max-width:600px){
+ #review-chat{position:fixed;top:max(70px,calc(env(safe-area-inset-top) + 58px));right:max(12px,env(safe-area-inset-right));bottom:auto;width:min(260px,calc(100vw - 24px));max-height:48dvh;overflow:auto;padding:8px}
+ #review-chat header strong{display:none}
+ #review-chat header{float:right}#review-channel{width:calc(100% - 51px);margin:0}
+ #review-chat #review-log{max-height:10dvh;margin:4px 0}
+ #review-chat #review-send input{flex:1;width:0}
+}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -169,7 +186,7 @@
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=307b3e2c9adddbba57e7ba9abec05195f3778ea8').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=307b3e2c9adddbba57e7ba9abec05195f3778ea8'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=5bd248e0d4b9887052fc01420d4e4dd72ab9d510').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=5bd248e0d4b9887052fc01420d4e4dd72ab9d510'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
