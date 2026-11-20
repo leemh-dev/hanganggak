@@ -1,12 +1,22 @@
 {
-  "commit": "f1fce46b7cd2eda0dd3d320cb675418322c67afa",
-  "builtAt": "2026-11-20T03:47:33.319Z",
+  "commit": "9cf4d1914a3043e604d0e8de2be4b714d8b5fae3",
+  "builtAt": "2026-11-20T04:49:05.122Z",
   "kind": "single-player review with public market quote API",
   "files": [
     {
       "path": "river/mobile-world.glb",
       "bytes": 12158860,
       "sha256": "d9506c0ef6b00518eac44b2db819b43b755f12c2b577311f4765f78234f451b7"
+    },
+    {
+      "path": "river/clerk.glb",
+      "bytes": 682756,
+      "sha256": "9c56b2d41948637b8b5c2013b21a69b81cd00d1c98a69282ee22daea57ec5b79"
+    },
+    {
+      "path": "river/ramen.glb",
+      "bytes": 218580,
+      "sha256": "0ff379dee5cafc7193aed74f54ac58c5cb3280940211547f7102247be6beecbc"
     },
     {
       "path": "river/landing.glb",
@@ -25,8 +35,8 @@
     },
     {
       "path": "river/world.json",
-      "bytes": 24165,
-      "sha256": "fb64cbb843d06b52f9049cb4d7b0d6d919db1f8bdb721c2971f2d6aaf235c064"
+      "bytes": 24237,
+      "sha256": "6c8bcb5cfcb4e214ded8c9315f96681cc41eae71038d46686c4c593795fcac9d"
     },
     {
       "path": "river/policy.json",
@@ -35,8 +45,8 @@
     },
     {
       "path": "river/river-world.json",
-      "bytes": 24165,
-      "sha256": "fb64cbb843d06b52f9049cb4d7b0d6d919db1f8bdb721c2971f2d6aaf235c064"
+      "bytes": 24237,
+      "sha256": "6c8bcb5cfcb4e214ded8c9315f96681cc41eae71038d46686c4c593795fcac9d"
     },
     {
       "path": "river/river-policy.json",
@@ -100,8 +110,8 @@
     },
     {
       "path": "lounge/river-world.json",
-      "bytes": 24165,
-      "sha256": "fb64cbb843d06b52f9049cb4d7b0d6d919db1f8bdb721c2971f2d6aaf235c064"
+      "bytes": 24237,
+      "sha256": "6c8bcb5cfcb4e214ded8c9315f96681cc41eae71038d46686c4c593795fcac9d"
     },
     {
       "path": "lounge/river-policy.json",
