@@ -134,6 +134,13 @@
 .bar-choices span {font-size:1.65rem}
 .bar-choices:has(> button:only-child) {grid-template-columns:1fr}
 .bar-choices > button:only-child {display:flex;align-items:center;justify-content:center;gap:.65rem}
+
+.gesture-guide ul{list-style:none;margin:0 0 12px;padding:0}
+.gesture-guide li{display:flex;align-items:baseline;gap:8px;padding:4px 0;line-height:1.45}
+.gesture-guide li span{flex:0 0 1.5em;text-align:center}
+.gesture-common-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));column-gap:8px}
+.gesture-guide{word-break:keep-all}
+@media(max-width:440px){.gesture-common-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -182,6 +189,14 @@
  <button id="open-chat" aria-label="채팅" aria-controls="review-chat" aria-expanded="false">💬</button>
 </div>
 <template id="review-preferences">
+ <details class="gesture-guide">
+  <summary></summary>
+  <p class="gesture-action-hint"></p>
+  <ul class="gesture-map-list"></ul>
+  <h3>기본 제스처</h3>
+  <p>바닥에 서서 오른쪽 아래 🙂를 누른 뒤 동작을 고르세요.</p>
+  <ul class="gesture-common-list"></ul>
+ </details>
  <section class="sound-settings" aria-labelledby="sound-title"><h3 id="sound-title">소리</h3></section>
  <button type="button" id="open-report" aria-haspopup="dialog">개발자에게 제보하기</button>
 </template>
@@ -199,7 +214,7 @@
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=f4477d3b7bfa427829d3b567569cff8a66b70c52').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=f4477d3b7bfa427829d3b567569cff8a66b70c52'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=3528cb952891bf46a6eb1ff1756cbea2a67b2cdb').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=3528cb952891bf46a6eb1ff1756cbea2a67b2cdb'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
