@@ -3936,7 +3936,7 @@ function stockWithQuote(stock, quote) {
 var signed = (v, digits = 2) => Number.isFinite(v) ? `${v >= 0 ? "+" : ""}${v.toFixed(digits)}%` : "\uC2DC\uC138 \uC5C6\uC74C";
 function quoteDisplay(q) {
   if (!q || q.mode !== "live") return { price: "", change: "", status: "\uB370\uBAA8 \xB7 \uAC00\uC0C1 \uB4F1\uB77D\uB960", time: "" };
-  const labels = { open: "\uC7A5\uC911", closed: "\uC7A5\uB9C8\uAC10/\uD734\uC7A5", holiday: "\uD734\uC7A5", delayed: "\uC2DC\uC138 \uC9C0\uC5F0", failed: "\uC218\uC9D1 \uC2E4\uD328 \xB7 \uB9C8\uC9C0\uB9C9 \uC815\uC0C1\uAC12", unavailable: "\uC2DC\uC138 \uC5C6\uC74C", unknown: "\uC7A5\uC0C1\uD0DC \uBBF8\uD655\uC778" };
+  const labels = { open: "\uC7A5\uC911", closed: "\uB9C8\uAC10", holiday: "\uD734\uC7A5", delayed: "\uC2DC\uC138 \uC9C0\uC5F0 \xB7 \uB9C8\uC9C0\uB9C9 \uD655\uC778\uAC12", failed: "\uC218\uC9D1 \uC2E4\uD328 \xB7 \uB9C8\uC9C0\uB9C9 \uC815\uC0C1\uAC12", unavailable: "\uC2DC\uC138 \uC5C6\uC74C", unknown: "\uC7A5\uC0C1\uD0DC \uBBF8\uD655\uC778" };
   const time = (value) => value ? new Date(value).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : null;
   const valid = Number.isFinite(q.price) && Number.isFinite(q.change);
   return { price: valid ? `${q.price.toLocaleString("ko-KR")}\uC6D0` : "\uC2DC\uC138 \uC5C6\uC74C", change: valid ? signed(q.change) : "", status: `${q.source ?? "\uB124\uC774\uBC84 \uC6F9"} \xB7 ${labels[q.status] ?? labels.unknown}`, time: `${q.quoteAt ? "\uC2DC\uC138 " + time(q.quoteAt) : "\uC2DC\uC138 \uC2DC\uAC01 \uBBF8\uC81C\uACF5"} \xB7 ${q.fetchedAt ? "\uC870\uD68C " + time(q.fetchedAt) : "\uC815\uC0C1 \uC870\uD68C \uC5C6\uC74C"}` };
@@ -4128,7 +4128,10 @@ async function select(stock) {
     const quote = await cachedQuote(stock.id, request.signal);
     if (chosen !== stock) return;
     cached = stockWithQuote(stock, quote);
-    if (cached) {
+    if (cached && ["delayed", "failed"].includes(quote.status)) {
+      cached = null;
+      status.textContent = stock.name + " \xB7 \uC785\uC7A5\uD560 \uB54C \uCD5C\uC2E0 \uAC70\uB798 \uC2DC\uC138\uB97C \uD655\uC778\uD574\uC694.";
+    } else if (cached) {
       const view = quoteDisplay(quote);
       status.textContent = stock.name + " \xB7 " + view.price + " \xB7 " + view.change + " \xB7 " + view.status + " \xB7 " + view.time;
     }
