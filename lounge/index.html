@@ -55,7 +55,7 @@
 #ux-stock-picker input::placeholder{color:#c5d4d3}
 #ux-stock-picker p{font-size:13px;color:#c6d7d4}#ux-stock-picker p:empty{display:none}
 .stock-results{max-height:40dvh;overflow:auto;overscroll-behavior:contain}
-.stock-results button{display:block;text-align:left;width:100%;border:0;border-bottom:1px solid #365457;border-radius:0;background:transparent;font:inherit}
+.stock-results button,.stock-results a.stock-row{display:block;text-align:left;width:100%;border:0;border-bottom:1px solid #365457;border-radius:0;background:transparent;font:inherit}
 .stock-results small{display:block;color:#bed2d0}
 
 .stock-results .stock-row[data-stock]{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 4px}
@@ -65,6 +65,10 @@
 #scene,#scene canvas{-webkit-tap-highlight-color:transparent}
 #ux-room-count{flex:none;border-radius:12px;background:#142d32eb;color:#f2f7f4;padding:8px 10px;font:600 13px system-ui;font-variant-numeric:tabular-nums;white-space:nowrap}
 #ux-map-name{min-width:0}
+
+[aria-label="주식 시장"]{display:flex;gap:4px;margin:8px 0}[aria-label="주식 시장"] button{min-height:44px;min-width:64px;border:1px solid #719092;border-radius:9px;background:#203e43;color:#edf5f3}#ux-stock-picker [aria-label="주식 시장"] [aria-pressed=true]{background:#c5e5d9;color:#183330;font-weight:700}
+
+a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border-box}a.stock-row:focus-visible{outline:2px solid #9bd5e1;outline-offset:-2px}.stock-row .web-quote{align-self:center;flex:none;font-size:13px;color:#c5e5d9}
 </style><style>#review-dock{position:fixed;z-index:35;right:max(14px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));display:flex;gap:8px}
 #review-dock[hidden],#review-dock [hidden]{display:none}
 #review-dock button{min-width:45px;min-height:45px;cursor:pointer;color:#fff;background:#19363bf2;border:1px solid #ffffff48;border-radius:14px;font-size:22px}
@@ -217,7 +221,7 @@
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=8b275a67e1cc6fc3c2c58475ebb7dafd7d36f819').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=8b275a67e1cc6fc3c2c58475ebb7dafd7d36f819'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=ac42082c28c4e5232d73437b8ddf2cc0628b31ea').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=ac42082c28c4e5232d73437b8ddf2cc0628b31ea'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
