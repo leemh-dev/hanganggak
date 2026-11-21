@@ -4184,7 +4184,7 @@ function requestPicker(room) {
       status.textContent = "\uBC29\uC758 \uC885\uBAA9 \uBAA9\uB85D\uC744 \uBD88\uB7EC\uC624\uACE0 \uC788\uC5B4\uC694.";
       return;
     }
-    const rows = board.requested ? board.items : [], query = search.value.trim();
+    const rows = board.items, query = search.value.trim();
     const options = query ? searchStocks(query, "cap", stock_catalog_default).slice(0, 40) : board.items;
     function markCurrent() {
       const previous = list.querySelector("[aria-current]");
@@ -4202,7 +4202,7 @@ function requestPicker(room) {
     const focused = document.activeElement?.dataset.stock;
     list.replaceChildren();
     const replace = stocks.get(board.replace);
-    status.textContent = !room.connected ? "\uBC29\uC5D0 \uB2E4\uC2DC \uC5F0\uACB0\uD558\uACE0 \uC788\uC5B4\uC694." : message || (board.requested ? "\uC2E0\uCCAD " + rows.length + "/30 \xB7 \uC88B\uC544\uC694\uB294 24\uC2DC\uAC04 \uC720\uC9C0\uB429\uB2C8\uB2E4." + (replace ? " \uC0C8 \uC2E0\uCCAD \uC2DC " + replace.name + " \uAD50\uCCB4" : "") : "\uC804\uAD11\uD310\uC740 \uAE30\uBCF8 \uB300\uC2DC\uBCF4\uB4DC\uB97C \uD45C\uC2DC \uC911\uC785\uB2C8\uB2E4. \uC2DC\uCD1D \uC0C1\uC704 10\uAC1C\uC5D0\uC11C \uACE0\uB974\uAC70\uB098 \uAC80\uC0C9\uD574 \uC8FC\uC138\uC694.");
+    status.textContent = !room.connected ? "\uBC29\uC5D0 \uB2E4\uC2DC \uC5F0\uACB0\uD558\uACE0 \uC788\uC5B4\uC694." : message || (query ? "\uAC80\uC0C9 \uACB0\uACFC" : "\uC804\uAD11\uD310 \uB4F1\uB85D " + rows.length + "/30") + " \xB7 \uB9E4\uC77C \uC624\uC804 9\uC2DC \uCD08\uAE30\uD654" + (replace ? " \xB7 \uB2E4\uC74C \uAD50\uCCB4: " + replace.name : "");
     if (!options.length) {
       list.textContent = query ? "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : "\uCCAB \uC885\uBAA9\uC744 \uC2E0\uCCAD\uD574 \uC8FC\uC138\uC694.";
       return;
@@ -4253,7 +4253,7 @@ function requestPicker(room) {
     search.value = "";
     message = "";
     lastKey = "";
-    document.querySelector("#ux-map-name").focus();
+    document.querySelector("#ux-menu-toggle").focus();
   };
   picker.addEventListener("keydown", (e) => e.stopPropagation());
   new MutationObserver(draw).observe(picker, { attributes: true, attributeFilter: ["open"] });
