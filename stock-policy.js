@@ -3988,29 +3988,47 @@ function connectPlayRoom(origin, id, identity = null) {
   function receive(group) {
     for (const player of group) if (player.id !== self?.id) players.set(player.id, player);
   }
-  let opening = false, expired;
+  let connecting = null, deadline;
+  function stopConnection() {
+    clearTimeout(deadline);
+    clearTimeout(retry);
+    connecting?.abort();
+    connecting = null;
+    const ws = socket;
+    socket = null;
+    ws?.close();
+    reset();
+  }
+  function scheduleRetry() {
+    stopConnection();
+    if (entered && !paused) retry = setTimeout(open, Math.min(8e3, 500 * 2 ** Math.min(4, attempt++)));
+  }
   async function open() {
-    if (!entered || paused || socket || opening || document.hidden) return;
-    opening = true;
-    let token;
+    if (!entered || paused || socket || connecting || document.hidden) return;
+    const controller = new AbortController();
+    connecting = controller;
+    deadline = setTimeout(scheduleRetry, 12e3);
+    let ws, token;
     try {
-      if (identity) token = await identity.guestToken(expired);
+      if (identity) token = await identity.guestToken(controller.signal);
+      if (controller.signal.aborted) return;
+      ws = new WebSocket(url);
+      socket = ws;
     } catch {
-      retry = setTimeout(open, 2500);
+      if (!controller.signal.aborted) scheduleRetry();
       return;
-    } finally {
-      opening = false;
     }
-    if (paused || socket) return;
-    const ws = new WebSocket(url);
-    socket = ws;
-    if (identity) ws.onopen = () => ws.send(JSON.stringify({ type: "entry", name: identity.name, token }));
+    if (identity) ws.onopen = () => {
+      if (socket === ws) ws.send(JSON.stringify({ type: "entry", name: identity.name, token }));
+    };
     ws.onmessage = (event) => {
       if (socket !== ws) return;
       const m = JSON.parse(event.data);
       if (m.type === "map-board" || m.type === "board-likes") window.dispatchEvent(new CustomEvent(m.type, { detail: m.type === "map-board" ? m : m.ids }));
       if (m.type === "notice-queue") flights = m.flights;
       if (m.type === "welcome") {
+        clearTimeout(deadline);
+        connecting = null;
         flights = m.flights ?? [];
         clockOffset = Number.isFinite(m.serverTime) ? m.serverTime - Date.now() : 0;
         self = { id: m.id, name: m.name, slot: m.slot, entryIndex: m.entryIndex };
@@ -4031,23 +4049,21 @@ function connectPlayRoom(origin, id, identity = null) {
         else item.resolve(m);
       }
     };
-    ws.onclose = (event) => {
-      if (event.code === 4001) expired = token;
-      if (socket !== ws) return;
-      socket = null;
-      reset();
-      clearTimeout(retry);
-      retry = setTimeout(open, Math.min(8e3, 500 * 2 ** Math.min(4, attempt++)));
+    ws.onclose = () => {
+      if (socket === ws) scheduleRetry();
     };
+  }
+  function reconnect() {
+    if (self || !entered || paused) return;
+    stopConnection();
+    attempt = 0;
+    open();
   }
   function suspend() {
     paused = true;
-    clearTimeout(retry);
-    const ws = socket;
-    socket = null;
-    ws?.close();
-    reset();
+    stopConnection();
   }
+  window.addEventListener("online", reconnect);
   window.addEventListener("stock-room-entered", () => {
     entered = true;
     open();
@@ -4062,6 +4078,7 @@ function connectPlayRoom(origin, id, identity = null) {
   });
   return {
     players,
+    reconnect,
     get flights() {
       return flights;
     },
@@ -4106,17 +4123,31 @@ function connectPlayRoom(origin, id, identity = null) {
 
 // demo/beta-quality-completion/map-policy.mjs
 var stocks = new Map(stock_catalog_default.map((s) => [s.id, s]));
-async function guestToken(expired) {
-  async function get() {
-    const key = "hanganggak-map-guest", stored = localStorage.getItem(key);
-    if (stored && stored !== expired) return stored;
-    const r = await fetch(quoteOrigin + "/maps/guest", { method: "POST", signal: AbortSignal.timeout(2e4) });
-    if (!r.ok) throw Error("\uBC29 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.");
-    const { token } = await r.json();
-    localStorage.setItem(key, token);
-    return token;
+var guestKey = "hanganggak-map-guest";
+var memoryToken;
+function storedGuest() {
+  try {
+    return localStorage.getItem(guestKey) || memoryToken;
+  } catch {
+    return memoryToken;
   }
-  return navigator.locks ? navigator.locks.request("hanganggak-guest", get) : get();
+}
+async function guestToken(signal) {
+  const previous = storedGuest();
+  const res = await fetch(quoteOrigin + "/maps/guest", { method: "POST", body: /^[a-f0-9]{32}\.[a-f0-9]{64}$/.test(previous) ? previous : "", signal, cache: "no-store" });
+  if (!res.ok) throw Error("\uBC29 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.");
+  const { token } = await res.json();
+  if (!token) throw Error("\uBC29 \uC785\uC7A5 \uC815\uBCF4\uB97C \uBC1B\uC9C0 \uBABB\uD588\uC5B4\uC694.");
+  function remember() {
+    const current = storedGuest();
+    memoryToken = current && current !== previous ? current : token;
+    try {
+      localStorage.setItem(guestKey, memoryToken);
+    } catch {
+    }
+    return memoryToken;
+  }
+  return navigator.locks ? navigator.locks.request("hanganggak-guest-save", { signal }, remember) : remember();
 }
 function requestPicker(room) {
   const picker = document.querySelector("#ux-stock-picker"), search = picker.querySelector("input");
