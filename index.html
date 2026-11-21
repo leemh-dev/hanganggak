@@ -1,5 +1,20 @@
-<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>한강각 · 공간 선택</title>
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>한강각 · 입장</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#142c31;color:#f4f2df;font:16px/1.5 system-ui}main{width:min(100%,440px);margin:clamp(22px,9vh,100px) auto;padding:24px}h1{font-size:32px;margin:0 0 24px}input,button{font:inherit}input{display:block;width:100%;margin:8px 0 22px;padding:13px;border:1px solid #859c98;border-radius:9px;background:#203e44;color:white}button{display:flex;width:100%;justify-content:space-between;align-items:center;padding:16px;margin:9px 0;border:1px solid #76948b;border-radius:12px;background:#dfe8d6;color:#193530;font-weight:700;cursor:pointer}button:disabled{opacity:.55}button span{font-weight:400;font-size:14px}p{color:#daeadb}label{font-weight:600}
-</style><main><h1>한강각</h1><label for="nickname">닉네임</label><input id="nickname" autocomplete="off" maxlength="32" placeholder="한글·영문·숫자 등 1~16자">
-<button disabled data-map="river">한강공원 <span></span></button><button disabled data-map="lounge">루프탑 라운지 <span></span></button><p role="status"></p></main><script type="module" src="./stock-entry.js?v=0a1583be54ebab16690cd25a5b6ae4d18b99886b"></script></html>
+*{box-sizing:border-box}body{margin:0;background:#142c31;color:#f4f2df;font:16px/1.5 system-ui}main{width:min(100%,440px);margin:clamp(22px,9vh,100px) auto;padding:24px}h1{font-size:32px;margin:0 0 24px}input,button{width:100%;font:inherit}input{display:block;margin:8px 0 20px;padding:13px;border:1px solid #859c98;border-radius:9px;background:#203e44;color:white}button{padding:14px;border:1px solid #76948b;border-radius:12px;background:#dfe8d6;color:#193530;font-weight:700;cursor:pointer}button:disabled{opacity:.55}p{color:#daeadb}label{font-weight:600}
+</style>
+<main>
+ <h1>한강각</h1>
+ <p>코스피가 하락하면 한강공원, 보합이거나 상승하면 루프탑 라운지로 입장합니다.</p>
+ <form>
+  <label for="nickname">닉네임</label>
+  <input id="nickname" autocomplete="off" maxlength="32" required placeholder="한글·영문·숫자 등 1~16자">
+  <button type="submit" disabled>입장하기</button>
+  <p role="status"></p>
+ </form>
+</main>
+<script type="module" src="./stock-entry.js?v=26e2480519b019d7427034ab218e4998bf6b2d09"></script>
+</html>
