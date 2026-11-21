@@ -33,10 +33,10 @@ form.addEventListener("submit", async (event) => {
   try {
     const response = await fetch(quoteOrigin + "/maps/entry", { cache: "no-store", signal: AbortSignal.timeout(45e3) });
     if (!response.ok) throw Error();
-    const { map } = await response.json();
+    const { map, change } = await response.json();
     if (!["river", "lounge"].includes(map)) throw Error();
     try {
-      sessionStorage.setItem("map-entry", JSON.stringify({ map, name: normalized() }));
+      sessionStorage.setItem("map-entry", JSON.stringify({ map, name: normalized(), indexChange: Number.isFinite(change) ? change : null }));
     } catch {
       status.textContent = "\uC774 \uBE0C\uB77C\uC6B0\uC800\uC5D0\uC11C \uC138\uC158 \uC800\uC7A5\uC744 \uD5C8\uC6A9\uD574 \uC8FC\uC138\uC694.";
       return;

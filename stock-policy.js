@@ -4291,7 +4291,7 @@ async function ensureStockRoute() {
   room.reportStatus = () => report("status");
   room.reportCode = (email, text) => report("code", { email, text, room: map });
   room.reportSubmit = (id, code) => report("submit", { id, code });
-  window.hanganggakEntryStock = { id: map, name, map: map === "river" ? "river" : "rooftop", change: 0, quote: { mode: "live" } };
+  window.hanganggakEntryStock = { id: map, name, map: map === "river" ? "river" : "rooftop", change: Number.isFinite(user.indexChange) ? user.indexChange : null, quote: { mode: "live" } };
   requestPicker(room);
   window.addEventListener("map-board", (e) => {
     window.mapBoard = e.detail;
