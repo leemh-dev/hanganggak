@@ -170,28 +170,28 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <section id="guide" class="panel" aria-label="조작 도움말" hidden><h2>공간 둘러보기</h2><p>바닥이나 수면을 클릭하면 그곳으로 이동합니다.<br>마우스 드래그로 시점 · 휠로 거리 조절<br>WASD / 방향키도 보조 조작으로 사용할 수 있습니다.<br>휴대폰은 바닥·수면 탭 이동 · 한 손가락 드래그 / 핀치 줌</p><p>한강: 경사로로 공원과 물을 오갈 수 있습니다.<br>사다리를 클릭·탭하면 자동으로 접근해 올라가거나 내려갑니다.<br>다이빙대를 선택해 도착한 뒤 수면을 누르면 그 방향으로 다이빙합니다.<br>PC는 마우스를 올리면, 휴대폰은 가까이 가면 흰 테두리와 문구가 보입니다.</p><p>↺ 버튼은 시점만 초기화합니다.<br>전체 화면 버튼으로 다시 입장하거나 종료할 수 있습니다.<br>PC는 Esc로 전체 화면을 종료할 수 있습니다.</p><p>시점은 좌우로 360도 돌릴 수 있습니다.<br>난간과 가구 주변에서는 카메라가 가까워집니다.</p><small id="position">위치 —</small><button id="close-help">계속 둘러보기</button></section>
 <div id="ux-stick" aria-label="이동 조이스틱"><span></span></div>
 <header id="ux-bar"><span id="ux-room-count" role="status" hidden>인원 확인 중</span><button type="button" id="ux-map-name" aria-haspopup="dialog" aria-controls="ux-stock-picker"><span id="ux-stock-name">한강각</span> <span id="ux-stock-change"></span><span aria-hidden="true">⌄</span></button><button id="ux-menu-toggle" aria-label="게임 설정 열기" aria-controls="ux-menu" aria-expanded="false">☰</button></header>
-<section id="ux-entry" role="dialog" aria-modal="true" aria-labelledby="ux-entry-title"><div class="ux-card"><h1 id="ux-entry-title">잠시만 기다려 주세요</h1><p id="ux-entry-note">공간을 불러오고 있어요.</p><button id="ux-enter" disabled>불러오는 중…</button><a href="../">종목 다시 선택</a></div></section>
+<section id="ux-entry" role="dialog" aria-modal="true" aria-labelledby="ux-entry-title"><div class="ux-card"><h1 id="ux-entry-title">잠시만 기다려 주세요</h1><p id="ux-entry-note">공간을 불러오고 있어요.</p><button id="ux-enter" disabled>불러오는 중…</button><a href="../">공간 다시 선택</a></div></section>
 <div id="ux-menu-shade" hidden></div>
 <section id="ux-menu" role="dialog" aria-modal="true" aria-labelledby="ux-menu-title" hidden>
  <header class="ux-menu-head"><h2 id="ux-menu-title">게임 설정</h2><button id="ux-close" type="button" aria-label="설정 닫기">×</button></header>
  <div class="ux-menu-body">
-  <div class="ux-menu-actions"><button id="ux-choose" type="button" aria-haspopup="dialog" aria-controls="ux-stock-picker">종목 선택</button></div>
-  <div id="ux-extra-settings"></div>
+  <div class="ux-menu-actions"><button id="ux-choose" type="button" aria-haspopup="dialog" aria-controls="ux-stock-picker">종목 신청</button></div>
+  <a href="../">다른 공간으로 이동</a><div id="ux-extra-settings"></div>
   
  </div>
 </section>
 <dialog id="ux-stock-picker" aria-labelledby="picker-title">
- <header><h2 id="picker-title">종목 선택</h2><button type="button" aria-label="종목 선택 닫기">×</button></header>
- <input type="search" aria-label="종목명 또는 코드" placeholder="종목명 또는 코드" autocomplete="off" autofocus>
+ <header><h2 id="picker-title">종목 신청</h2><button type="button" aria-label="종목 신청 닫기">×</button></header>
+ <input type="search" aria-label="종목명 또는 코드" placeholder="종목명 또는 코드" autocomplete="off">
  <p role="status"></p><div class="stock-results" hidden></div>
 </dialog>
 <div id="ux-toast" role="status" aria-live="polite" hidden></div>
 <button id="sky-notice" type="button" aria-label="비행선 공지 보기" hidden><span aria-hidden="true">✉</span> <span id="sky-text"></span></button>
 <div id="review-dock" hidden>
  <div id="review-emotes" class="review-panel" role="group" aria-label="제스처 선택" hidden></div>
- <section id="review-chat" class="review-panel" aria-label="종목방 채팅" hidden>
+ <section id="review-chat" class="review-panel" aria-label="공간 채팅" hidden>
   <header>
-  <strong>종목방 채팅</strong>
+  <strong>공간 채팅</strong>
   <button id="review-chat-close" type="button" aria-label="채팅 닫기">×</button></header>
   <p id="notice-state" role="status" hidden></p>
   <p id="room-chat-status" role="status"></p>
@@ -232,7 +232,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=a35f45e5c532ad72ae8aa4d256e84172f5001a5d').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=a35f45e5c532ad72ae8aa4d256e84172f5001a5d'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=1ce220668122e3cfac7f1487662390277962f9f9').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=1ce220668122e3cfac7f1487662390277962f9f9'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
