@@ -1,8 +1,8 @@
 {
-  "commit": "86364f91050e30a83b2c3914d9e766ed0c071c80",
+  "commit": "520c30eb51e603b07aa46d464d1b2a858af6d78a",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-21T12:07:24.018Z",
+  "builtAt": "2026-11-21T13:12:41.979Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {
@@ -154,6 +154,36 @@
       "path": "lounge/billboard-ko.otf",
       "bytes": 51716,
       "sha256": "1ec202f0d782e2450f6e86a2e92650435334256e104fab4b8fca179ac3fa8377"
+    },
+    {
+      "path": "pungmul/chant.glb",
+      "bytes": 4631984,
+      "sha256": "ba9ca20a27a814a3d6d417de884c77e9f2b63379fda00c800d5b0c615a72cf5e"
+    },
+    {
+      "path": "pungmul/buk.glb",
+      "bytes": 4732444,
+      "sha256": "cab18b90cdc98c09f272a46bab83d5afe16bd2e963eb5f75f3257eaf18be1bd8"
+    },
+    {
+      "path": "pungmul/janggu.glb",
+      "bytes": 4891968,
+      "sha256": "17ca4e36b368ee1fc443a026818a4cc9bc6c3403b183998ed65c5ae756344cc8"
+    },
+    {
+      "path": "pungmul/kkwaenggwari.glb",
+      "bytes": 4712572,
+      "sha256": "8d63482cee1cf2d1428736353899f27c4caf49f38023e5fa63c91336eec195e4"
+    },
+    {
+      "path": "pungmul/jing.glb",
+      "bytes": 4712560,
+      "sha256": "a0c10811e73314c59d996b813e89b49bd6558da0887ff2e8aa6c051450708cab"
+    },
+    {
+      "path": "pungmul/sangmo.glb",
+      "bytes": 4699260,
+      "sha256": "ea3e9263c84d8814700a57c49ac19e17a503a2e9bfbfa2f220c16c01effee43f"
     },
     {
       "path": "ant-review.glb",

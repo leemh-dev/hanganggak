@@ -1,3 +1,37 @@
+// demo/beta-quality-completion/room-back.mjs
+function roomBack() {
+  const dialog = document.getElementById("room-exit"), menu = document.getElementById("ux-menu");
+  let leaving = false;
+  function guard() {
+    if (!history.state?.roomBack) history.pushState({ ...history.state, roomBack: true }, "", location.href);
+  }
+  guard();
+  window.addEventListener("popstate", () => {
+    if (leaving || history.state?.roomBack) return;
+    guard();
+    const modal = [...document.querySelectorAll("dialog[open]")].at(-1);
+    if (modal) {
+      modal.close();
+      return;
+    }
+    if (!menu.hidden) {
+      document.getElementById("ux-close").click();
+      return;
+    }
+    dialog.showModal();
+    dialog.querySelector('[value="cancel"]').focus({ preventScroll: true });
+  });
+  dialog.querySelector('[value="cancel"]').onclick = () => dialog.close();
+  dialog.querySelector('[value="exit"]').onclick = () => {
+    leaving = true;
+    sessionStorage.removeItem("map-entry");
+    location.replace(new URL("../", location.href));
+  };
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted && !sessionStorage.getItem("map-entry")) location.replace(new URL("../", location.href));
+  });
+}
+
 // demo/shared/nickname.mjs
 function nickname(value) {
   if (typeof value !== "string") return null;
@@ -4280,6 +4314,7 @@ async function ensureStockRoute() {
     return false;
   }
   const name = map === "river" ? "\uD55C\uAC15\uACF5\uC6D0" : "\uB8E8\uD504\uD0D1 \uB77C\uC6B4\uC9C0";
+  roomBack();
   const room = connectPlayRoom(quoteOrigin, map, { name: playerName, guestToken });
   window.hanganggakCommunity = room;
   async function report(path, body) {
