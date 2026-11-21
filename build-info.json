@@ -1,8 +1,8 @@
 {
-  "commit": "3780b6505dd6e477baaa1da21d81ce61703f95c2",
+  "commit": "6f955ff4bfdd690cc3648aca6babfdc3552940ed",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-21T14:24:44.871Z",
+  "builtAt": "2026-11-21T14:45:35.982Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {
@@ -19,6 +19,11 @@
       "path": "river/jindo-kennels.glb",
       "bytes": 3958100,
       "sha256": "48848e785b9b31d26e2278b31e7e44e0728a27bcab6dc83d16b5ab536bea1e26"
+    },
+    {
+      "path": "river/posters.glb",
+      "bytes": 358312,
+      "sha256": "2bcd51eae49f9c60528a88b9182941bfaa6d82d5cae04b396184a1e099ce8bb0"
     },
     {
       "path": "river/clerk.glb",
@@ -47,8 +52,8 @@
     },
     {
       "path": "river/world.json",
-      "bytes": 22694,
-      "sha256": "df9c28dad8564f92cba2946bc9d7d628c5325b2fc2744a5fe04fdc1306467934"
+      "bytes": 22810,
+      "sha256": "aa0b1394627789151d614b92501579284f096d8311f739c9e7bfe3cf3fa1795e"
     },
     {
       "path": "river/policy.json",
@@ -57,8 +62,8 @@
     },
     {
       "path": "river/river-world.json",
-      "bytes": 22694,
-      "sha256": "df9c28dad8564f92cba2946bc9d7d628c5325b2fc2744a5fe04fdc1306467934"
+      "bytes": 22810,
+      "sha256": "aa0b1394627789151d614b92501579284f096d8311f739c9e7bfe3cf3fa1795e"
     },
     {
       "path": "river/river-policy.json",
@@ -127,8 +132,8 @@
     },
     {
       "path": "lounge/river-world.json",
-      "bytes": 22694,
-      "sha256": "df9c28dad8564f92cba2946bc9d7d628c5325b2fc2744a5fe04fdc1306467934"
+      "bytes": 22810,
+      "sha256": "aa0b1394627789151d614b92501579284f096d8311f739c9e7bfe3cf3fa1795e"
     },
     {
       "path": "lounge/river-policy.json",
