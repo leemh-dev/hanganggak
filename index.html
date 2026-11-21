@@ -5,26 +5,16 @@
 <title>한강각 · 입장</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#142c31;color:#f4f2df;font:16px/1.5 system-ui}main{width:min(100%,440px);margin:clamp(22px,9vh,100px) auto;padding:24px}h1{font-size:32px;margin:0 0 24px}input,button{width:100%;font:inherit}input{display:block;margin:8px 0 20px;padding:13px;border:1px solid #859c98;border-radius:9px;background:#203e44;color:white}button{padding:14px;border:1px solid #76948b;border-radius:12px;background:#dfe8d6;color:#193530;font-weight:700;cursor:pointer}button:disabled{opacity:.55}p{color:#daeadb}label{font-weight:600}
-details{margin:0 0 18px}summary{cursor:pointer;padding:8px 0}details button{margin:0 0 12px}
 </style>
 <main>
  <h1>한강각</h1>
  <p>코스피가 하락하면 한강공원, 보합이거나 상승하면 루프탑 라운지로 입장합니다.</p>
  <form>
   <label for="nickname">닉네임</label>
-  <input id="nickname" autocomplete="off" maxlength="32" required placeholder="한글·영문·숫자 등 1~16자">
-  <details id="owner" hidden>
-   <summary>운영자 전용 닉네임 · 본인 인증</summary>
-   <label for="owner-email">등록한 운영자 이메일</label>
-   <input id="owner-email" type="text" inputmode="email" autocomplete="email">
-   <button type="button" id="send-code">인증 코드 받기</button>
-   <div id="code-row" hidden><label for="owner-code">이메일 인증 코드</label>
-    <input id="owner-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="숫자 6자리">
-   </div>
-  </details>
+  <input id="nickname" autocomplete="off" maxlength="32" required placeholder="공백 없이 1~16자">
   <button type="submit" disabled>입장하기</button>
   <p role="status"></p>
  </form>
 </main>
-<script type="module" src="./stock-entry.js?v=b9f27c7cea2295159093743184ca761836872e73"></script>
+<script type="module" src="./stock-entry.js?v=a1df0919d70398f343badaa53f2b8848c52cbc05"></script>
 </html>

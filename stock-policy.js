@@ -1,3 +1,10 @@
+// demo/shared/nickname.mjs
+function nickname(value) {
+  if (typeof value !== "string") return null;
+  const name = value.normalize("NFKC").trim();
+  return !/\p{Default_Ignorable_Code_Point}/u.test(name) && /^[\p{L}\p{M}\p{N}_-]{1,16}$/u.test(name) ? name : null;
+}
+
 // demo/beta-quality-completion/quote-client.mjs
 var quoteOrigin = "https://hanganggak-realtime-demo.onrender.com";
 
@@ -4061,10 +4068,10 @@ function connectPlayRoom(origin, id, identity = null) {
     ws.onmessage = (event) => {
       if (socket !== ws) return;
       const m = JSON.parse(event.data);
-      if (identity && m.type === "nickname-reserved") {
+      if (identity && m.type === "nickname-invalid") {
         suspend();
         const entry = new URL("../", location.href);
-        entry.searchParams.set("nickname", "reserved");
+        entry.searchParams.set("nickname", "invalid");
         location.replace(entry);
         return;
       }
@@ -4267,12 +4274,13 @@ async function ensureStockRoute() {
     user = JSON.parse(sessionStorage.getItem("map-entry"));
   } catch {
   }
-  if (typeof user?.name !== "string" || !/^[\p{L}\p{M}\p{N}_ -]{1,16}$/u.test(user.name.trim()) || user.map !== map || !["river", "lounge"].includes(map)) {
-    location.replace("../");
+  const playerName = nickname(user?.name);
+  if (!playerName || user.map !== map || !["river", "lounge"].includes(map)) {
+    location.replace(user?.name && !playerName ? "../?nickname=invalid" : "../");
     return false;
   }
   const name = map === "river" ? "\uD55C\uAC15\uACF5\uC6D0" : "\uB8E8\uD504\uD0D1 \uB77C\uC6B4\uC9C0";
-  const room = connectPlayRoom(quoteOrigin, map, { name: user.name, guestToken });
+  const room = connectPlayRoom(quoteOrigin, map, { name: playerName, guestToken });
   window.hanganggakCommunity = room;
   async function report(path, body) {
     const res = await fetch(quoteOrigin + "/reports/" + path, { method: body ? "POST" : "GET", headers: body ? { "Content-Type": "application/json" } : {}, body: body ? JSON.stringify(body) : void 0 });
