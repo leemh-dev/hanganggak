@@ -1,8 +1,8 @@
 {
-  "commit": "6f955ff4bfdd690cc3648aca6babfdc3552940ed",
+  "commit": "bb4b52fa77b251d831c4fdd96bf1e7f92ac3a3ff",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-21T14:45:35.982Z",
+  "builtAt": "2026-11-21T22:32:21.106Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {
@@ -96,6 +96,26 @@
       "sha256": "240ffbac7967f7f191e764f0a2bf98c3858149a166bf0dd93b5124302ced2cee"
     },
     {
+      "path": "lounge/sero.glb",
+      "bytes": 361184,
+      "sha256": "8cd698b4297dcb2f8e98e748bf0db9be2dee23589a138dca6a566223fc7fdac2"
+    },
+    {
+      "path": "lounge/sero-homes.webp",
+      "bytes": 605422,
+      "sha256": "19c26d01ad9783f57e586ed6c042ae155c02e832a10d2df6725cc4ee5c0c3082"
+    },
+    {
+      "path": "lounge/sero-cars.webp",
+      "bytes": 588406,
+      "sha256": "ca203e7c7dbf6e757eee8602698ca7977321af136ba4c70209b7d5df68356eef"
+    },
+    {
+      "path": "lounge/sero-credits.html",
+      "bytes": 5024,
+      "sha256": "a991474b071f2116deaa7e7de40ec38f8102e01acec30f4e3df38861cecdc4ce"
+    },
+    {
       "path": "lounge/bull.glb",
       "bytes": 1083536,
       "sha256": "c82f60295fdca0c5d83a492da09bbb46a03a4beb078aa95ff6494ea6eac0773d"
@@ -122,8 +142,8 @@
     },
     {
       "path": "lounge/world.json",
-      "bytes": 142820,
-      "sha256": "df76704543aa77f52c6e8e2fe5873f552e91580f265939bfe7e3a63e722dbe1b"
+      "bytes": 143126,
+      "sha256": "c7de1e4e9b20e1b919b8045d9b1327c96834f2c76978572f5514139bb81bd033"
     },
     {
       "path": "lounge/policy.json",
