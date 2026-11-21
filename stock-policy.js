@@ -4123,17 +4123,30 @@ function requestPicker(room) {
   const status = picker.querySelector("[role=status]"), list = picker.querySelector(".stock-results");
   let board, liked = [], busy = false, lastKey = "", message = "";
   function draw() {
-    if (!picker.open || !board) return;
+    if (!picker.open) return;
+    if (!board) {
+      status.textContent = "\uBC29\uC758 \uC885\uBAA9 \uBAA9\uB85D\uC744 \uBD88\uB7EC\uC624\uACE0 \uC788\uC5B4\uC694.";
+      return;
+    }
     const rows = board.requested ? board.items : [], query = search.value.trim();
-    const options = query ? searchStocks(query, "cap", stock_catalog_default).slice(0, 40) : rows;
-    const key = JSON.stringify([query, rows.map((i) => [i.id, i.likes]), board.replace, liked, busy, message]);
-    if (lastKey === key) return;
+    const options = query ? searchStocks(query, "cap", stock_catalog_default).slice(0, 40) : board.items;
+    function markCurrent() {
+      const previous = list.querySelector("[aria-current]");
+      if (previous?.dataset.stock === board.current) return;
+      previous?.removeAttribute("aria-current");
+      list.querySelector('[data-stock="' + board.current + '"]')?.setAttribute("aria-current", "true");
+    }
+    const key = JSON.stringify([query, board.requested, board.items.map((i) => [i.id, i.likes]), board.replace, liked, busy, message, room.connected]);
+    if (lastKey === key) {
+      markCurrent();
+      return;
+    }
     lastKey = key;
     list.hidden = false;
     const focused = document.activeElement?.dataset.stock;
     list.replaceChildren();
     const replace = stocks.get(board.replace);
-    status.textContent = message || "\uC2E0\uCCAD " + rows.length + "/30" + (replace ? " \xB7 \uC0C8 \uC2E0\uCCAD \uC2DC " + replace.name + " \uAD50\uCCB4" : "");
+    status.textContent = !room.connected ? "\uBC29\uC5D0 \uB2E4\uC2DC \uC5F0\uACB0\uD558\uACE0 \uC788\uC5B4\uC694." : message || (board.requested ? "\uC2E0\uCCAD " + rows.length + "/30 \xB7 \uC88B\uC544\uC694\uB294 24\uC2DC\uAC04 \uC720\uC9C0\uB429\uB2C8\uB2E4." + (replace ? " \uC0C8 \uC2E0\uCCAD \uC2DC " + replace.name + " \uAD50\uCCB4" : "") : "\uC544\uC9C1 \uC2E0\uCCAD\uC774 \uC5C6\uC5B4 \uC2DC\uCD1D \uC0C1\uC704 10\uAC1C\uB97C \uD45C\uC2DC\uD569\uB2C8\uB2E4.");
     if (!options.length) {
       list.textContent = query ? "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : "\uCCAB \uC885\uBAA9\uC744 \uC2E0\uCCAD\uD574 \uC8FC\uC138\uC694.";
       return;
@@ -4148,7 +4161,7 @@ function requestPicker(room) {
       name.textContent = item.name;
       action.textContent = entry ? (on ? "\u2665 " : "\u2661 ") + entry.likes : "\uFF0B \uC2E0\uCCAD";
       if (entry) button.setAttribute("aria-pressed", String(on));
-      button.setAttribute("aria-label", item.name + " " + (entry ? "\uC88B\uC544\uC694 " + entry.likes : "\uC2E0\uCCAD"));
+      button.setAttribute("aria-label", item.name + " " + (entry ? (on ? "\uC88B\uC544\uC694 \uCDE8\uC18C, \uD604\uC7AC " : "\uC88B\uC544\uC694, \uD604\uC7AC ") + entry.likes + "\uD45C" : "\uC2E0\uCCAD"));
       button.append(name, action);
       button.disabled = busy || !room.connected;
       button.onclick = async () => {
@@ -4172,6 +4185,7 @@ function requestPicker(room) {
       };
       list.append(button);
     }
+    markCurrent();
     if (focused) list.querySelector('[data-stock="' + focused + '"]')?.focus({ preventScroll: true });
   }
   search.oninput = () => {
@@ -4195,10 +4209,7 @@ function requestPicker(room) {
     liked = e.detail;
     draw();
   });
-  window.addEventListener("room-chat-status", () => {
-    lastKey = "";
-    draw();
-  });
+  window.addEventListener("room-chat-status", draw);
 }
 async function ensureStockRoute() {
   const map = location.pathname.split("/").filter(Boolean).at(-1);

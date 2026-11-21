@@ -56,6 +56,7 @@
 #ux-stock-picker p{font-size:13px;color:#c6d7d4}#ux-stock-picker p:empty{display:none}
 .stock-results{max-height:40dvh;overflow:auto;overscroll-behavior:contain}
 .stock-results button,.stock-results a.stock-row{display:block;text-align:left;width:100%;border:0;border-bottom:1px solid #365457;border-radius:0;background:transparent;font:inherit}
+.stock-results [aria-current=true] > span:first-child::after{content:'전광판 표시 중';display:block;color:#a8e6cb;font-size:12px}
 .stock-results small{display:block;color:#bed2d0}
 
 .stock-results .stock-row[data-stock]{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 4px}
@@ -232,7 +233,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=1ce220668122e3cfac7f1487662390277962f9f9').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=1ce220668122e3cfac7f1487662390277962f9f9'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=8c9c3c7c49858a2e8f360e224b3efb86fd90f015').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=8c9c3c7c49858a2e8f360e224b3efb86fd90f015'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 

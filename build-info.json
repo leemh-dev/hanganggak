@@ -1,9 +1,9 @@
 {
-  "commit": "1ce220668122e3cfac7f1487662390277962f9f9",
+  "commit": "8c9c3c7c49858a2e8f360e224b3efb86fd90f015",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-21T03:23:30.883Z",
-  "kind": "single-player review with public market quote API",
+  "builtAt": "2026-11-21T04:00:14.495Z",
+  "kind": "shared map rooms with public market quote API",
   "files": [
     {
       "path": "river/mobile-world.glb",
