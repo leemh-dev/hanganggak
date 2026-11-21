@@ -34,7 +34,11 @@ form.addEventListener("submit", async (event) => {
       status.textContent = "\uC774 \uBE0C\uB77C\uC6B0\uC800\uC5D0\uC11C \uC138\uC158 \uC800\uC7A5\uC744 \uD5C8\uC6A9\uD574 \uC8FC\uC138\uC694.";
       return;
     }
-    location.assign("./" + map + "/?enter=1");
+    const roomUrl = new URL("./" + map + "/", location.href);
+    roomUrl.searchParams.set("enter", "1");
+    const version = new URL(import.meta.url).searchParams.get("v");
+    if (version) roomUrl.searchParams.set("v", version);
+    location.assign(roomUrl);
     navigating = true;
   } catch {
     status.textContent = "\uCF54\uC2A4\uD53C\uB97C \uD655\uC778\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC7A0\uC2DC \uD6C4 \uB2E4\uC2DC \uC785\uC7A5\uD574 \uC8FC\uC138\uC694.";
