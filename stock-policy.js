@@ -1,3 +1,43 @@
+// demo/beta-quality-completion/quote-client.mjs
+var quoteOrigin = "https://hanganggak-realtime-demo.onrender.com";
+
+// demo/beta-quality-completion/map-guest.mjs
+var guestKey = "hanganggak-map-guest";
+var memoryToken;
+function storedGuest() {
+  try {
+    const saved = localStorage.getItem(guestKey);
+    if (saved) return saved;
+  } catch {
+  }
+  try {
+    return sessionStorage.getItem(guestKey) || memoryToken;
+  } catch {
+    return memoryToken;
+  }
+}
+async function guestToken(signal) {
+  const previous = storedGuest();
+  const res = await fetch(quoteOrigin + "/maps/guest", { method: "POST", body: /^[a-f0-9]{32}\.[a-f0-9]{64}$/.test(previous) ? previous : "", signal, cache: "no-store" });
+  if (!res.ok) throw Error("\uBC29 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.");
+  const { token } = await res.json();
+  if (!token) throw Error("\uBC29 \uC785\uC7A5 \uC815\uBCF4\uB97C \uBC1B\uC9C0 \uBABB\uD588\uC5B4\uC694.");
+  function remember() {
+    const current = storedGuest();
+    memoryToken = current && current !== previous ? current : token;
+    try {
+      localStorage.setItem(guestKey, memoryToken);
+    } catch {
+      try {
+        sessionStorage.setItem(guestKey, memoryToken);
+      } catch {
+      }
+    }
+    return memoryToken;
+  }
+  return navigator.locks ? navigator.locks.request("hanganggak-guest-save", { signal }, remember) : remember();
+}
+
 // demo/shared/stock-catalog.json
 var stock_catalog_default = [
   { id: "000020", name: "\uB3D9\uD654\uC57D\uD488", market: "KOSPI", type: "STOCK", marketCap: 1386 },
@@ -3953,9 +3993,6 @@ function searchStocks(query = "", sort = "cap", stocks2 = DEMO_STOCKS, counts = 
   });
 }
 
-// demo/beta-quality-completion/quote-client.mjs
-var quoteOrigin = "https://hanganggak-realtime-demo.onrender.com";
-
 // demo/beta-quality-completion/play-connection.mjs
 function connectPlayRoom(origin, id, identity = null) {
   const url = new URL((identity ? "/maps/" : "/play/") + encodeURIComponent(id), origin);
@@ -4024,6 +4061,13 @@ function connectPlayRoom(origin, id, identity = null) {
     ws.onmessage = (event) => {
       if (socket !== ws) return;
       const m = JSON.parse(event.data);
+      if (identity && m.type === "nickname-reserved") {
+        suspend();
+        const entry = new URL("../", location.href);
+        entry.searchParams.set("nickname", "reserved");
+        location.replace(entry);
+        return;
+      }
       if (m.type === "map-board" || m.type === "board-likes") window.dispatchEvent(new CustomEvent(m.type, { detail: m.type === "map-board" ? m : m.ids }));
       if (m.type === "notice-queue") flights = m.flights;
       if (m.type === "welcome") {
@@ -4123,32 +4167,6 @@ function connectPlayRoom(origin, id, identity = null) {
 
 // demo/beta-quality-completion/map-policy.mjs
 var stocks = new Map(stock_catalog_default.map((s) => [s.id, s]));
-var guestKey = "hanganggak-map-guest";
-var memoryToken;
-function storedGuest() {
-  try {
-    return localStorage.getItem(guestKey) || memoryToken;
-  } catch {
-    return memoryToken;
-  }
-}
-async function guestToken(signal) {
-  const previous = storedGuest();
-  const res = await fetch(quoteOrigin + "/maps/guest", { method: "POST", body: /^[a-f0-9]{32}\.[a-f0-9]{64}$/.test(previous) ? previous : "", signal, cache: "no-store" });
-  if (!res.ok) throw Error("\uBC29 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694.");
-  const { token } = await res.json();
-  if (!token) throw Error("\uBC29 \uC785\uC7A5 \uC815\uBCF4\uB97C \uBC1B\uC9C0 \uBABB\uD588\uC5B4\uC694.");
-  function remember() {
-    const current = storedGuest();
-    memoryToken = current && current !== previous ? current : token;
-    try {
-      localStorage.setItem(guestKey, memoryToken);
-    } catch {
-    }
-    return memoryToken;
-  }
-  return navigator.locks ? navigator.locks.request("hanganggak-guest-save", { signal }, remember) : remember();
-}
 function requestPicker(room) {
   const picker = document.querySelector("#ux-stock-picker"), search = picker.querySelector("input");
   const status = picker.querySelector("[role=status]"), list = picker.querySelector(".stock-results");
