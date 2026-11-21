@@ -1,14 +1,14 @@
 {
-  "commit": "520c30eb51e603b07aa46d464d1b2a858af6d78a",
+  "commit": "23747bd10b86f91166727d992233c2d974d1acd7",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-21T13:12:41.979Z",
+  "builtAt": "2026-11-21T14:11:40.435Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {
       "path": "river/mobile-world.glb",
-      "bytes": 12199580,
-      "sha256": "1f2b529ebd4d8cb178476a3fd413e5cbe247b9d060322e55f66d2dc686ec3e66"
+      "bytes": 12193384,
+      "sha256": "57d6de367708a5303c2a463982172477ec96511706cec67b8f344d95cd1c1d02"
     },
     {
       "path": "river/anteater.glb",
@@ -47,8 +47,8 @@
     },
     {
       "path": "river/world.json",
-      "bytes": 24334,
-      "sha256": "a358412997c5d489a1a21e6efda780e1f34ddf9ddcc3f528283be73474642d1c"
+      "bytes": 23608,
+      "sha256": "c57aabe125a182ce4fe168b3304806e52e49edbe8ca0554313198f2df886b2e1"
     },
     {
       "path": "river/policy.json",
@@ -57,8 +57,8 @@
     },
     {
       "path": "river/river-world.json",
-      "bytes": 24334,
-      "sha256": "a358412997c5d489a1a21e6efda780e1f34ddf9ddcc3f528283be73474642d1c"
+      "bytes": 23608,
+      "sha256": "c57aabe125a182ce4fe168b3304806e52e49edbe8ca0554313198f2df886b2e1"
     },
     {
       "path": "river/river-policy.json",
@@ -67,8 +67,8 @@
     },
     {
       "path": "river/river.glb",
-      "bytes": 28121072,
-      "sha256": "e920df9b838fb0cd76171713cc011e3cc62226cca7373bd46f7a08776c787a33"
+      "bytes": 28114876,
+      "sha256": "42b55f8b6f213b1c9dfb4180c7c5c5bed1353f86b58532dc5d1372e2711ed874"
     },
     {
       "path": "river/sky.exr",
@@ -127,8 +127,8 @@
     },
     {
       "path": "lounge/river-world.json",
-      "bytes": 24334,
-      "sha256": "a358412997c5d489a1a21e6efda780e1f34ddf9ddcc3f528283be73474642d1c"
+      "bytes": 23608,
+      "sha256": "c57aabe125a182ce4fe168b3304806e52e49edbe8ca0554313198f2df886b2e1"
     },
     {
       "path": "lounge/river-policy.json",
