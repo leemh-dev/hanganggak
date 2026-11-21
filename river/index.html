@@ -163,6 +163,16 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 
 .npc-speech{position:fixed;inset:0;pointer-events:none;z-index:12}
 #bar-order[open]{inset:auto 0 max(16px,env(safe-area-inset-bottom));margin:0 auto}
+#room-exit{width:min(20rem,85vw);box-sizing:border-box;padding:22px;border:1px solid #62827d;border-radius:16px;color:#fff;background:#18373a}
+#room-exit::backdrop{background:#081c21a6}
+#room-exit h2{margin:0 0 20px;font-size:1.16rem}
+#room-exit div{display:flex;gap:10px}
+#room-exit button{flex:1;min-height:44px;border:1px solid #75928c;border-radius:10px;background:#24494c;color:#fff;font:inherit}
+#room-exit [value=exit]{background:#d5e7d4;color:#132f34}
+#bar-order{max-height:80dvh;overflow:auto}
+#review-emotes button[data-instrument]{font-size:19px;line-height:1.2}
+#review-emotes button[data-instrument] small{display:block;font:10px system-ui}
+#review-emotes [aria-pressed=true]{border-color:#e5c573;background:#385744}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -243,7 +253,11 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
   <button type="button" id="report-edit" hidden>다시 입력</button>
  </form>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=86364f91050e30a83b2c3914d9e766ed0c071c80').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=86364f91050e30a83b2c3914d9e766ed0c071c80'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+<dialog id="room-exit" aria-labelledby="room-exit-title">
+ <h2 id="room-exit-title">한강각을 종료할까요?</h2>
+ <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
+</dialog>
+</main><script type="module">import('../stock-policy.js?v=520c30eb51e603b07aa46d464d1b2a858af6d78a').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=520c30eb51e603b07aa46d464d1b2a858af6d78a'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
