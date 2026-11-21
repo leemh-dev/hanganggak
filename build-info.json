@@ -1,8 +1,8 @@
 {
-  "commit": "8c9c3c7c49858a2e8f360e224b3efb86fd90f015",
+  "commit": "0a1583be54ebab16690cd25a5b6ae4d18b99886b",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-21T04:00:14.495Z",
+  "builtAt": "2026-11-21T06:33:15.092Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {
@@ -77,8 +77,8 @@
     },
     {
       "path": "river/billboard-ko.otf",
-      "bytes": 51144,
-      "sha256": "4608f5d3fd4027ac0a274eab2f731d3f00b1f0a46bc0026c44fcd65bea5b3d2d"
+      "bytes": 51716,
+      "sha256": "1ec202f0d782e2450f6e86a2e92650435334256e104fab4b8fca179ac3fa8377"
     },
     {
       "path": "lounge/mobile-world.glb",
@@ -147,8 +147,8 @@
     },
     {
       "path": "lounge/billboard-ko.otf",
-      "bytes": 51144,
-      "sha256": "4608f5d3fd4027ac0a274eab2f731d3f00b1f0a46bc0026c44fcd65bea5b3d2d"
+      "bytes": 51716,
+      "sha256": "1ec202f0d782e2450f6e86a2e92650435334256e104fab4b8fca179ac3fa8377"
     },
     {
       "path": "ant-review.glb",
