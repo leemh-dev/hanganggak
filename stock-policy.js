@@ -4146,7 +4146,7 @@ function requestPicker(room) {
     const focused = document.activeElement?.dataset.stock;
     list.replaceChildren();
     const replace = stocks.get(board.replace);
-    status.textContent = !room.connected ? "\uBC29\uC5D0 \uB2E4\uC2DC \uC5F0\uACB0\uD558\uACE0 \uC788\uC5B4\uC694." : message || (board.requested ? "\uC2E0\uCCAD " + rows.length + "/30 \xB7 \uC88B\uC544\uC694\uB294 24\uC2DC\uAC04 \uC720\uC9C0\uB429\uB2C8\uB2E4." + (replace ? " \uC0C8 \uC2E0\uCCAD \uC2DC " + replace.name + " \uAD50\uCCB4" : "") : "\uC544\uC9C1 \uC2E0\uCCAD\uC774 \uC5C6\uC5B4 \uC2DC\uCD1D \uC0C1\uC704 10\uAC1C\uB97C \uD45C\uC2DC\uD569\uB2C8\uB2E4.");
+    status.textContent = !room.connected ? "\uBC29\uC5D0 \uB2E4\uC2DC \uC5F0\uACB0\uD558\uACE0 \uC788\uC5B4\uC694." : message || (board.requested ? "\uC2E0\uCCAD " + rows.length + "/30 \xB7 \uC88B\uC544\uC694\uB294 24\uC2DC\uAC04 \uC720\uC9C0\uB429\uB2C8\uB2E4." + (replace ? " \uC0C8 \uC2E0\uCCAD \uC2DC " + replace.name + " \uAD50\uCCB4" : "") : "\uC804\uAD11\uD310\uC740 \uAE30\uBCF8 \uB300\uC2DC\uBCF4\uB4DC\uB97C \uD45C\uC2DC \uC911\uC785\uB2C8\uB2E4. \uC2DC\uCD1D \uC0C1\uC704 10\uAC1C\uC5D0\uC11C \uACE0\uB974\uAC70\uB098 \uAC80\uC0C9\uD574 \uC8FC\uC138\uC694.");
     if (!options.length) {
       list.textContent = query ? "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : "\uCCAB \uC885\uBAA9\uC744 \uC2E0\uCCAD\uD574 \uC8FC\uC138\uC694.";
       return;
