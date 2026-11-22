@@ -4039,7 +4039,7 @@ function connectPlayRoom(origin, id, identity = null) {
   const url = new URL((identity ? "/maps/" : "/play/") + encodeURIComponent(id), origin);
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   const players = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
-  let flights = [];
+  let flights = [], rescue = null;
   let population = null, clockOffset = 0;
   function setPopulation(count) {
     if (count === population) return;
@@ -4052,6 +4052,7 @@ function connectPlayRoom(origin, id, identity = null) {
   }
   function reset() {
     self = null;
+    rescue = null;
     flights = [];
     setPopulation(null);
     lastPose = "";
@@ -4110,10 +4111,12 @@ function connectPlayRoom(origin, id, identity = null) {
         return;
       }
       if (m.type === "map-board" || m.type === "board-likes") window.dispatchEvent(new CustomEvent(m.type, { detail: m.type === "map-board" ? m : m.ids }));
+      if (m.type === "rescue-launch") rescue = m.boat;
       if (m.type === "notice-queue") flights = m.flights;
       if (m.type === "welcome") {
         clearTimeout(deadline);
         connecting = null;
+        rescue = m.rescue ?? null;
         flights = m.flights ?? [];
         clockOffset = Number.isFinite(m.serverTime) ? m.serverTime - Date.now() : 0;
         self = { id: m.id, name: m.name, slot: m.slot, entryIndex: m.entryIndex };
@@ -4164,6 +4167,9 @@ function connectPlayRoom(origin, id, identity = null) {
   return {
     players,
     reconnect,
+    get rescue() {
+      return rescue;
+    },
     get flights() {
       return flights;
     },

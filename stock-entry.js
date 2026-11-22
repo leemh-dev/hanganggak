@@ -13,6 +13,7 @@ var input = document.querySelector("#nickname");
 var form = input.form;
 var button = form.querySelector("button");
 var status = form.querySelector("[role=status]");
+var nicknameKey = "hanganggak-last-nickname";
 var normalized = () => nickname(input.value);
 var entering = false;
 function validate() {
@@ -35,11 +36,16 @@ form.addEventListener("submit", async (event) => {
     if (!response.ok) throw Error();
     const { map, change } = await response.json();
     if (!["river", "lounge"].includes(map)) throw Error();
+    const name = normalized();
     try {
-      sessionStorage.setItem("map-entry", JSON.stringify({ map, name: normalized(), indexChange: Number.isFinite(change) ? change : null }));
+      sessionStorage.setItem("map-entry", JSON.stringify({ map, name, indexChange: Number.isFinite(change) ? change : null }));
     } catch {
       status.textContent = "\uC774 \uBE0C\uB77C\uC6B0\uC800\uC5D0\uC11C \uC138\uC158 \uC800\uC7A5\uC744 \uD5C8\uC6A9\uD574 \uC8FC\uC138\uC694.";
       return;
+    }
+    try {
+      localStorage.setItem(nicknameKey, name);
+    } catch {
     }
     const roomUrl = new URL("./" + map + "/", location.href);
     roomUrl.searchParams.set("enter", "1");
@@ -62,9 +68,16 @@ window.addEventListener("pageshow", () => {
     sessionStorage.removeItem("map-entry");
   } catch {
   }
+  const rejected = new URL(location.href).searchParams.get("nickname") === "invalid";
   input.value = "";
+  if (!rejected) {
+    try {
+      input.value = nickname(localStorage.getItem(nicknameKey)) ?? "";
+    } catch {
+    }
+  }
   input.readOnly = false;
   entering = false;
   validate();
-  if (new URL(location.href).searchParams.get("nickname") === "invalid") status.textContent = "\uB2C9\uB124\uC784\uC744 \uACF5\uBC31 \uC5C6\uC774 \uB2E4\uC2DC \uC785\uB825\uD574 \uC8FC\uC138\uC694.";
+  if (rejected) status.textContent = "\uB2C9\uB124\uC784\uC744 \uACF5\uBC31 \uC5C6\uC774 \uB2E4\uC2DC \uC785\uB825\uD574 \uC8FC\uC138\uC694.";
 });

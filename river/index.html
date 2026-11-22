@@ -114,6 +114,8 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #ux-menu label[for=review-weather]{display:block;margin-top:10px}
 #review-weather{width:100%;min-height:40px;font:inherit}
 #open-report{width:100%;margin:6px 0}
+#ux-menu .support-pay{gap:2px;padding:9px 12px}
+#ux-menu .support-pay small{color:#ffe77a}
 #game-report{box-sizing:border-box;width:min(390px,calc(100vw - 24px));max-height:84dvh;overflow:auto;padding:16px;border-radius:16px;border:1px solid #527174;background:#142e34;color:#f1f6f2}
 #game-report::backdrop{background:#061519a0}
 #game-report header{display:flex;align-items:center;justify-content:space-between}
@@ -237,10 +239,14 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
   <ul class="gesture-common-list"></ul>
  </details>
  <section class="sound-settings" aria-labelledby="sound-title"><h3 id="sound-title">소리</h3></section>
- <button type="button" id="open-report" aria-haspopup="dialog">개발개미한테 아이디어 제공</button>
+ <button type="button" id="open-report" aria-haspopup="dialog">개발개미한테 아이디어 제공하기</button>
+ <a class="support-pay" href="https://qr.kakaopay.com/Ej9C3BfwC" target="_blank" rel="noopener noreferrer" aria-label="🐜 개발개미 물타기 도와주기 · 카카오페이 송금 (새 창)">
+  <span>🐜 개발개미 물타기 도와주기</span>
+  <small>카카오페이로 송금 ↗</small>
+ </a>
 </template>
 <dialog id="game-report" aria-labelledby="report-heading">
- <header><h2 id="report-heading">개발개미한테 아이디어 제공</h2><button type="button" id="report-close" aria-label="아이디어 창 닫기">×</button></header>
+ <header><h2 id="report-heading">개발개미한테 아이디어 제공하기</h2><button type="button" id="report-close" aria-label="아이디어 창 닫기">×</button></header>
  <form id="report-form">
   <fieldset id="report-draft">
    <label>답장받을 이메일<input id="report-email" type="email" maxlength="254" autocomplete="email" required></label>
@@ -257,7 +263,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <h2 id="room-exit-title">한강각을 종료할까요?</h2>
  <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=bb4b52fa77b251d831c4fdd96bf1e7f92ac3a3ff').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=bb4b52fa77b251d831c4fdd96bf1e7f92ac3a3ff'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=126ab24f17c909140392294616b430d9d35b06f6').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=126ab24f17c909140392294616b430d9d35b06f6'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
 
 
 
