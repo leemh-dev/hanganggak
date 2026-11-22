@@ -4429,7 +4429,7 @@ function connectPlayRoom(origin, id, identity = null) {
   function receive(group) {
     for (const player of group) if (player.id !== self?.id) players.set(player.id, player);
   }
-  let connecting = null, deadline;
+  let connecting = null, deadline, hasJoined = false;
   function stopConnection() {
     clearTimeout(deadline);
     clearTimeout(retry);
@@ -4460,7 +4460,7 @@ function connectPlayRoom(origin, id, identity = null) {
       return;
     }
     if (identity) ws.onopen = () => {
-      if (socket === ws) ws.send(JSON.stringify({ type: "entry", name: identity.name, token }));
+      if (socket === ws) ws.send(JSON.stringify({ type: "entry", name: identity.name, token, resume: hasJoined }));
     };
     ws.onmessage = (event) => {
       if (socket !== ws) return;
@@ -4477,9 +4477,13 @@ function connectPlayRoom(origin, id, identity = null) {
         const text = m.kind === "notice" ? "\uC0C8 \uACF5\uC9C0\uAC00 \uC62C\uB77C\uC654\uC5B4\uC694" : "\uC0C8 \uAC8C\uC2DC\uAE00\uC774 \uC62C\uB77C\uC654\uC5B4\uC694";
         window.dispatchEvent(new CustomEvent("game-announcement", { detail: { text, at: m.at } }));
       }
+      if (m.type === "room-arrival") {
+        window.dispatchEvent(new CustomEvent("room-arrival", { detail: { text: m.name + "\uB2D8\uC774 \uC785\uC7A5\uD558\uC168\uC2B5\uB2C8\uB2E4", at: m.at } }));
+      }
       if (m.type === "rescue-launch") rescue = m.boat;
       if (m.type === "notice-queue") flights = m.flights;
       if (m.type === "welcome") {
+        hasJoined = true;
         clearTimeout(deadline);
         connecting = null;
         rescue = m.rescue ?? null;
