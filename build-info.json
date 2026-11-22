@@ -1,8 +1,8 @@
 {
-  "commit": "8ec087a55b6624513bb6c7904e49cb717b765cac",
+  "commit": "23f0edeb4193b7eb9f19c9f0492f4196ce7ac3f7",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-22T12:44:58.723Z",
+  "builtAt": "2026-11-22T12:56:58.635Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {

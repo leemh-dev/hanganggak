@@ -88,14 +88,19 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #review-log li span{max-width:88%;padding:5px 9px;border-radius:9px;background:#304e52;color:#fff;line-height:1.4;white-space:pre-wrap}
 #review-log li.mine{align-items:flex-end}
 #review-log .mine span{background:#275452}
-#review-log li.chat-notice span{background:#403c29;color:#ffdc72}
 .chat-reading{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:start;gap:4px;min-height:0}
 #review-log:empty{margin:0}
 #review-chat #review-chat-close{min-width:44px;min-height:44px}
 #review-chat #review-chat-close{font-size:20px;background:transparent;border-color:transparent}
 #review-send input{min-width:0;border-radius:8px;padding:8px;color:#123;background:#f1f4ee;font:16px system-ui}
 #review-send input{flex:1}#review-send button{font-size:14px}
-#sky-notice{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 56px);left:max(12px,env(safe-area-inset-left));max-width:min(330px,85vw);min-height:38px;background:#183b40ed;color:#fff2d3;border:1px solid #c9af73;border-radius:10px;text-align:left;font-size:13px;overflow-wrap:anywhere;z-index:30}
+#game-notices{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));width:min(330px,calc(100vw - 32px));z-index:30;pointer-events:none;display:grid;justify-items:start;gap:5px}
+@media(max-width:600px){#game-notices{top:calc(max(12px,env(safe-area-inset-top)) + 52px)}}
+#game-announcements{display:grid;justify-items:start;gap:4px}
+#game-announcements:empty{display:none}
+#game-announcements>div{max-width:100%;box-sizing:border-box;padding:7px 11px;border-radius:9px;background:#152d32ef;color:#ffe59a;font:600 14px/1.45 system-ui,sans-serif;overflow-wrap:anywhere}
+#game-announcements strong{color:#fff}
+#sky-notice{pointer-events:auto;max-width:100%;min-height:38px;background:#183b40ed;color:#fff2d3;border:1px solid #c9af73;border-radius:10px;text-align:left;font-size:13px;overflow-wrap:anywhere;z-index:30}
 #sky-notice[hidden]{display:none}
 #review-channel{display:flex;flex:none;gap:2px}
 #review-channel button{min-width:44px;min-height:44px;padding:0 5px;border-radius:8px;font-size:19px;background:transparent;border-color:transparent}
@@ -266,7 +271,10 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <p role="status"></p><div class="stock-results" hidden></div>
 </dialog>
 <div id="ux-toast" role="status" aria-live="polite" hidden></div>
-<button id="sky-notice" type="button" aria-label="비행선 공지 보기" hidden><span aria-hidden="true">✉</span> <span id="sky-text"></span></button>
+<div id="game-notices">
+ <div id="game-announcements" role="log" aria-label="게임 공지" aria-live="polite" aria-relevant="additions"></div>
+ <button id="sky-notice" type="button" aria-label="비행선 공지 보기" hidden><span aria-hidden="true">✉</span> <span id="sky-text"></span></button>
+</div>
 <div id="review-dock" hidden>
  <div id="review-emotes" class="review-panel" role="group" aria-label="제스처 선택" hidden></div>
  <section id="review-chat" class="review-panel" aria-label="채팅" hidden>
@@ -322,7 +330,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <h2 id="room-exit-title">한강각을 종료할까요?</h2>
  <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=8ec087a55b6624513bb6c7904e49cb717b765cac').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=8ec087a55b6624513bb6c7904e49cb717b765cac'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
+</main><script type="module">import('../stock-policy.js?v=23f0edeb4193b7eb9f19c9f0492f4196ce7ac3f7').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=23f0edeb4193b7eb9f19c9f0492f4196ce7ac3f7'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
  <header class="forum-head"><nav aria-label="글 종류"><button data-kind="board">게시판</button><button data-kind="notice">공지</button></nav><button class="forum-close" aria-label="한 단계 뒤로">×</button></header>
  <section class="forum-list">
   <div class="forum-tools"><div aria-label="정렬"><button data-sort="latest">최신글</button><button data-sort="popular">인기글</button></div><input type="search" aria-label="제목 또는 내용 검색" maxlength="120" placeholder="제목·내용 검색"></div>

@@ -4473,6 +4473,10 @@ function connectPlayRoom(origin, id, identity = null) {
         return;
       }
       if (m.type === "map-board" || m.type === "board-likes") window.dispatchEvent(new CustomEvent(m.type, { detail: m.type === "map-board" ? m : m.ids }));
+      if (m.type === "forum-published" && (m.kind === "board" || m.kind === "notice")) {
+        const text = m.kind === "notice" ? "\uC0C8 \uACF5\uC9C0\uAC00 \uC62C\uB77C\uC654\uC5B4\uC694" : "\uC0C8 \uAC8C\uC2DC\uAE00\uC774 \uC62C\uB77C\uC654\uC5B4\uC694";
+        window.dispatchEvent(new CustomEvent("game-announcement", { detail: { text } }));
+      }
       if (m.type === "rescue-launch") rescue = m.boat;
       if (m.type === "notice-queue") flights = m.flights;
       if (m.type === "welcome") {
