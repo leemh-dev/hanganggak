@@ -47,8 +47,8 @@ function mountForum(room) {
   const reply = $(".forum-reply"), input = reply.querySelector("textarea"), target = $(".reply-target");
   let kind = "board", sort = "latest", view = "list", items = [], hasMore = false, post, replyTo, version = 0, timer;
   let listTop = 0, pending = false, postRequest, commentRequest;
-  const gate = $(".forum-gate"), hiddenList = $(".forum-hidden");
-  let gateTask, noticeCode = "", hiddenCode = "", hiddenItems = [];
+  const gate = $(".forum-gate");
+  let gateTask, noticeCode = "";
   const date = new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
   function element(tag, text, cls) {
     const el = document.createElement(tag);
@@ -107,12 +107,6 @@ function mountForum(room) {
   };
   function show(next) {
     if (next !== "compose") noticeCode = "";
-    if (next !== "hidden") {
-      hiddenCode = "";
-      hiddenItems = [];
-      $(".hidden-rows").replaceChildren();
-    }
-    hiddenList.hidden = next !== "hidden";
     clearTimeout(timer);
     version++;
     view = next;
@@ -259,10 +253,6 @@ function mountForum(room) {
       dialog.close();
       return true;
     }
-    if (view === "hidden") {
-      startList();
-      return true;
-    }
     compose.reset();
     show("list");
     renderList();
@@ -296,9 +286,6 @@ function mountForum(room) {
   dialog.onclose = () => {
     dismissGate();
     noticeCode = "";
-    hiddenCode = "";
-    hiddenItems = [];
-    $(".hidden-rows").replaceChildren();
     clearTimeout(timer);
     version++;
     document.querySelector("#scene").focus({ preventScroll: true });
@@ -395,42 +382,17 @@ function mountForum(room) {
       status.textContent = "";
     });
   };
-  async function hiddenPage(key, append = false) {
-    const page = await admin("/posts?scope=hidden&offset=" + (append ? hiddenItems.length : 0), "GET", null, key);
-    show("hidden");
-    hiddenCode = key;
-    hiddenItems = append ? [...hiddenItems, ...page.items] : page.items;
-    const container = $(".hidden-rows");
-    container.replaceChildren();
-    if (!hiddenItems.length) container.textContent = "\uC228\uAE34 \uAE00\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.";
-    for (const item of hiddenItems) {
-      const row = element("div", "", "hidden-row");
-      row.append(element("strong", item.title), element("small", item.author));
-      for (const action of ["restore", "delete"]) {
-        const btn = element("button", action === "restore" ? "\uBCF5\uAD6C" : "\uC0AD\uC81C");
-        btn.onclick = () => moderate(item, action);
-        row.append(btn);
-      }
-      container.append(row);
-    }
-    $(".hidden-more").hidden = !page.more;
-  }
   function moderate(item, action) {
-    const removing = action === "delete", hidden = view === "hidden";
-    const label = removing ? "\uC0AD\uC81C" : action === "hide" ? "\uC228\uAE30\uAE30" : "\uBCF5\uAD6C";
+    const removing = action === "delete";
+    const label = removing ? "\uC0AD\uC81C" : "\uC228\uAE30\uAE30";
     const hint = removing ? "\uC0AD\uC81C\uD558\uBA74 \uB313\uAE00\uACFC \uCD94\uCC9C\uB3C4 \uD568\uAED8 \uC0AD\uC81C\uB418\uBA70 \uBCF5\uAD6C\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4." : "";
     askCode("\u300C" + item.title + "\u300D " + label, hint, label, async (key) => {
-      await admin("/posts/" + item.id, removing ? "DELETE" : "PATCH", removing ? null : { hidden: action === "hide" }, key);
-      if (hidden) await hiddenPage(key);
-      else {
-        input.value = "";
-        setReply(null);
-        startList();
-      }
+      await admin("/posts/" + item.id, removing ? "DELETE" : "PATCH", removing ? null : { hidden: true }, key);
+      input.value = "";
+      setReply(null);
+      startList();
     });
   }
-  $(".forum-hidden-open").onclick = () => askCode("\uC228\uAE34 \uAE00 \uAD00\uB9AC", "", "\uBAA9\uB85D \uBCF4\uAE30", (key) => hiddenPage(key));
-  $(".hidden-more").onclick = () => write(() => hiddenPage(hiddenCode, true));
   for (const btn of dialog.querySelectorAll("[data-moderate]")) btn.onclick = () => {
     if (post) moderate(post, btn.dataset.moderate);
   };

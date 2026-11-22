@@ -224,12 +224,8 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #forum .forum-status:not(:empty){margin:0;background:#234148;padding:8px 18px}
 #forum .forum-status:empty{display:none}
 @media(max-width:480px){#forum .forum-tools{gap:4px;padding:8px}#forum .forum-tools button{padding-inline:9px}#forum .forum-scroll{padding-inline:12px}#forum .forum-reply{padding:8px}#forum .forum-head{padding:4px 8px 0}}
-#forum .forum-hidden-open{margin-right:auto;color:#bbcdca;font-size:14px}
 #forum .post-management{margin-bottom:16px;color:#c0d0cc}
 #forum .post-management summary{cursor:pointer;width:fit-content;padding:8px 0}
-#forum .forum-hidden h2{padding-inline:18px}
-#forum .hidden-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 0;border-bottom:1px solid #385659}
-#forum .hidden-row strong{flex:1;min-width:6em;overflow-wrap:anywhere}
 #forum .forum-gate{position:absolute;inset:0;z-index:2;display:grid;align-content:center;gap:12px;padding:clamp(18px,6vw,60px);background:#142d32;overflow:auto}
 #forum .forum-gate h2{overflow-wrap:anywhere}
 #forum .forum-gate p{margin:0}
@@ -326,12 +322,12 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <h2 id="room-exit-title">한강각을 종료할까요?</h2>
  <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=cab294ed8614956ac11fe87a8e1bd0140c70cb1a').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=cab294ed8614956ac11fe87a8e1bd0140c70cb1a'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
+</main><script type="module">import('../stock-policy.js?v=8ec087a55b6624513bb6c7904e49cb717b765cac').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=8ec087a55b6624513bb6c7904e49cb717b765cac'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
  <header class="forum-head"><nav aria-label="글 종류"><button data-kind="board">게시판</button><button data-kind="notice">공지</button></nav><button class="forum-close" aria-label="한 단계 뒤로">×</button></header>
  <section class="forum-list">
   <div class="forum-tools"><div aria-label="정렬"><button data-sort="latest">최신글</button><button data-sort="popular">인기글</button></div><input type="search" aria-label="제목 또는 내용 검색" maxlength="120" placeholder="제목·내용 검색"></div>
   <div class="forum-scroll" tabindex="-1"><div class="forum-rows"></div><button class="forum-more" hidden>더 보기</button></div>
-  <footer><button class="forum-hidden-open">숨긴 글 관리</button><button class="forum-write primary">✎ 글쓰기</button></footer>
+  <footer><button class="forum-write primary">✎ 글쓰기</button></footer>
  </section>
  <section class="forum-detail" hidden>
   <div class="forum-scroll"><article><h2></h2><small></small><p class="forum-body"></p><div class="forum-votes"><button data-vote="1"></button><button data-vote="-1"></button></div><details class="post-management"><summary>글 관리</summary><button data-moderate="hide">숨기기</button><button data-moderate="delete">삭제</button></details></article>
@@ -339,7 +335,6 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
   <form class="forum-reply"><div class="reply-target" hidden><span></span><button type="button" aria-label="답글 대상 취소">×</button></div><div class="reply-fields"><textarea required maxlength="800" rows="1" aria-label="댓글 내용" placeholder="댓글을 남겨 주세요"></textarea><button class="primary">등록</button></div></form>
  </section>
  <form class="forum-compose" hidden><h2>글쓰기</h2><label>제목<input name="title" required maxlength="100"></label><label class="compose-body">내용<textarea name="body" required maxlength="6000"></textarea></label><footer><button class="primary">등록</button></footer></form>
- <section class="forum-hidden" hidden><h2>숨긴 글</h2><div class="forum-scroll"><div class="hidden-rows"></div><button class="hidden-more" hidden>더 보기</button></div></section>
  <form class="forum-gate" hidden><button type="button" class="gate-x" aria-label="뒤로">×</button><h2></h2><p></p><label>운영 코드<input type="password" name="code" required maxlength="256" autocomplete="off"></label><div><button type="button" class="gate-cancel">취소</button><button class="primary">확인</button></div><small role="alert"></small></form>
  <p class="forum-status" role="status"></p>
 </dialog>
