@@ -86,6 +86,8 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #review-log li{display:flex;align-items:flex-start;flex-direction:column;gap:2px;margin:6px 0}
 #review-log small{font:600 11px/1.25 system-ui;color:#c9dcda}
 #review-log li span{max-width:88%;padding:5px 9px;border-radius:9px;background:#304e52;color:#fff;line-height:1.4;white-space:pre-wrap}
+#review-log time,#game-announcements time{font:500 11px/1.25 system-ui;color:#c9dcda;white-space:nowrap;font-variant-numeric:tabular-nums}
+#review-log li.chat-notice span{color:#ffe59a}
 #review-log li.mine{align-items:flex-end}
 #review-log .mine span{background:#275452}
 .chat-reading{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:start;gap:4px;min-height:0}
@@ -330,7 +332,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <h2 id="room-exit-title">한강각을 종료할까요?</h2>
  <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=23f0edeb4193b7eb9f19c9f0492f4196ce7ac3f7').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=23f0edeb4193b7eb9f19c9f0492f4196ce7ac3f7'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
+</main><script type="module">import('../stock-policy.js?v=b1769e392e6f90da2c2cd49f9026b9dcd50d9a01').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=b1769e392e6f90da2c2cd49f9026b9dcd50d9a01'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
  <header class="forum-head"><nav aria-label="글 종류"><button data-kind="board">게시판</button><button data-kind="notice">공지</button></nav><button class="forum-close" aria-label="한 단계 뒤로">×</button></header>
  <section class="forum-list">
   <div class="forum-tools"><div aria-label="정렬"><button data-sort="latest">최신글</button><button data-sort="popular">인기글</button></div><input type="search" aria-label="제목 또는 내용 검색" maxlength="120" placeholder="제목·내용 검색"></div>
