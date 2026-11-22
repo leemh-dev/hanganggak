@@ -50,23 +50,25 @@ function mountForum(room) {
   const gate = $(".forum-gate");
   let gateTask, noticeCode = "";
   const date = new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  const newsDate = new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Seoul" });
   function element(tag, text, cls) {
     const el = document.createElement(tag);
     el.textContent = text;
     if (cls) el.className = cls;
     return el;
   }
-  async function api(path = "", method = "GET", body, key, management = false) {
+  async function api(path = "", method = "GET", body, key, resource = "posts") {
+    const management = resource === "admin";
     if (!management && !room.connected) throw Error("\uBC29\uC5D0 \uC5F0\uACB0\uB41C \uB4A4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694.");
     const headers = management ? {} : { Authorization: "Bearer " + storedGuest(), "X-Player": room.self.id };
     if (key) headers["X-Forum-Admin"] = key;
     if (body) headers["Content-Type"] = "application/json";
-    const response = await fetch(quoteOrigin + (management ? "/forum/admin" : "/forum/posts") + path, { method, headers, body: body ? JSON.stringify(body) : void 0, cache: "no-store", signal: AbortSignal.timeout(15e3) });
+    const response = await fetch(quoteOrigin + "/forum/" + resource + path, { method, headers, body: body ? JSON.stringify(body) : void 0, cache: "no-store", signal: AbortSignal.timeout(15e3) });
     const data = await response.json();
     if (!response.ok) throw Error(data.error);
     return data;
   }
-  const admin = (path, method, body, key) => api(path, method, body, key, true);
+  const admin = (path, method, body, key) => api(path, method, body, key, "admin");
   function dismissGate() {
     gate.reset();
     gate.hidden = true;
@@ -118,8 +120,18 @@ function mountForum(room) {
   }
   function renderList() {
     rows.replaceChildren();
-    if (!items.length) rows.append(element("p", search.value ? "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : kind === "notice" ? "\uB4F1\uB85D\uB41C \uACF5\uC9C0\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : "\uCCAB \uAE00\uC744 \uB0A8\uACA8 \uBCF4\uC138\uC694."));
+    if (!items.length) rows.append(element("p", search.value ? "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : kind === "news" ? "\uCD5C\uADFC 7\uC77C \uB3D9\uC548 \uB4F1\uB85D\uB41C \uC99D\uC2DC\uB274\uC2A4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : kind === "notice" ? "\uB4F1\uB85D\uB41C \uACF5\uC9C0\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : "\uCCAB \uAE00\uC744 \uB0A8\uACA8 \uBCF4\uC138\uC694."));
     for (const item of items) {
+      if (kind === "news") {
+        const card = element("article", "", "forum-row");
+        const link = element("a", "\uC6D0\uBB38 \uBCF4\uAE30 \u2197");
+        link.href = item.source_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        card.append(element("strong", item.title), element("small", item.source + " \xB7 " + newsDate.format(new Date(item.published_at)) + " KST"), element("p", item.summary), link);
+        rows.append(card);
+        continue;
+      }
       const btn = element("button", "", "forum-row");
       btn.append(element("strong", item.title), element("small", item.author + " \xB7 " + date.format(new Date(item.created_at)) + " \xB7 \uC88B\uC544\uC694 " + item.likes + " \xB7 \uB313\uAE00 " + item.comments));
       btn.onclick = () => {
@@ -136,7 +148,7 @@ function mountForum(room) {
     more.disabled = true;
     const params = new URLSearchParams({ kind, sort, q: search.value.trim(), offset: append ? items.length : 0 });
     try {
-      const data = await api("?" + params);
+      const data = await api("?" + params, "GET", null, null, kind === "news" ? "news" : "posts");
       if (current !== version) return;
       items = append ? items.concat(data.items) : data.items;
       hasMore = data.more;
@@ -160,7 +172,10 @@ function mountForum(room) {
     rows.replaceChildren();
     more.hidden = true;
     list.querySelector(".forum-scroll").scrollTop = 0;
-    $(".forum-tools>div").hidden = kind === "notice";
+    $(".forum-tools>div").hidden = kind !== "board";
+    list.querySelector("footer").hidden = kind === "news";
+    search.placeholder = kind === "news" ? "\uB274\uC2A4 \uC81C\uBAA9\xB7\uB0B4\uC6A9\xB7\uCD9C\uCC98 \uAC80\uC0C9" : "\uC81C\uBAA9\xB7\uB0B4\uC6A9 \uAC80\uC0C9";
+    search.setAttribute("aria-label", search.placeholder);
     $(".forum-write").textContent = kind === "notice" ? "\u270E \uACF5\uC9C0 \uC791\uC131" : "\u270E \uAE00\uC4F0\uAE30";
     for (const b of dialog.querySelectorAll("[data-sort]")) b.setAttribute("aria-pressed", String(b.dataset.sort === sort));
     fetchList();
@@ -276,6 +291,9 @@ function mountForum(room) {
       for (const field of dialog.querySelectorAll("input,textarea")) field.readOnly = false;
     }
   }
+  window.addEventListener("market-news-published", () => {
+    if (dialog.open && kind === "news" && view === "list" && !search.value && !list.querySelector(".forum-scroll").scrollTop) fetchList();
+  });
   open.onclick = () => {
     dialog.showModal();
     kind = "board";
@@ -4473,8 +4491,9 @@ function connectPlayRoom(origin, id, identity = null) {
         return;
       }
       if (m.type === "map-board" || m.type === "board-likes") window.dispatchEvent(new CustomEvent(m.type, { detail: m.type === "map-board" ? m : m.ids }));
-      if (m.type === "forum-published" && (m.kind === "board" || m.kind === "notice")) {
-        const text = m.kind === "notice" ? "\uC0C8 \uACF5\uC9C0\uAC00 \uC62C\uB77C\uC654\uC5B4\uC694" : "\uC0C8 \uAC8C\uC2DC\uAE00\uC774 \uC62C\uB77C\uC654\uC5B4\uC694";
+      if (m.type === "forum-published" && ["board", "notice", "news"].includes(m.kind)) {
+        if (m.kind === "news") window.dispatchEvent(new Event("market-news-published"));
+        const text = m.kind === "news" ? "\uC0C8 \uB274\uC2A4\uAC00 \uB4F1\uB85D\uB410\uC2B5\uB2C8\uB2E4." : m.kind === "notice" ? "\uC0C8 \uACF5\uC9C0\uAC00 \uC62C\uB77C\uC654\uC5B4\uC694" : "\uC0C8 \uAC8C\uC2DC\uAE00\uC774 \uC62C\uB77C\uC654\uC5B4\uC694";
         window.dispatchEvent(new CustomEvent("game-announcement", { detail: { text, at: m.at } }));
       }
       if (m.type === "room-arrival") {

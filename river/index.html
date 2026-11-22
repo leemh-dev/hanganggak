@@ -240,6 +240,10 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #forum .forum-gate .primary{margin-left:8px}
 
 #forum .gate-x{position:absolute;top:8px;right:10px;font-size:26px}
+
+#forum article.forum-row{padding:14px 4px;gap:5px}
+#forum article.forum-row p{margin:0}
+#forum article.forum-row a{color:#b0e8ce;justify-self:start;padding:8px 0}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -336,8 +340,8 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <h2 id="room-exit-title">한강각을 종료할까요?</h2>
  <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=9f6d39f7853eddb5ad65e5dd743487555c199625').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=9f6d39f7853eddb5ad65e5dd743487555c199625'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
- <header class="forum-head"><nav aria-label="글 종류"><button data-kind="board">게시판</button><button data-kind="notice">공지</button></nav><button class="forum-close" aria-label="한 단계 뒤로">×</button></header>
+</main><script type="module">import('../stock-policy.js?v=65fe9de44947a6d935f87e6ae1b16b4a2aabec43').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=65fe9de44947a6d935f87e6ae1b16b4a2aabec43'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
+ <header class="forum-head"><nav aria-label="글 종류"><button data-kind="board">게시판</button><button data-kind="notice">공지</button><button data-kind="news">증시뉴스</button></nav><button class="forum-close" aria-label="한 단계 뒤로">×</button></header>
  <section class="forum-list">
   <div class="forum-tools"><div aria-label="정렬"><button data-sort="latest">최신글</button><button data-sort="popular">인기글</button></div><input type="search" aria-label="제목 또는 내용 검색" maxlength="120" placeholder="제목·내용 검색"></div>
   <div class="forum-scroll" tabindex="-1"><div class="forum-rows"></div><button class="forum-more" hidden>더 보기</button></div>
