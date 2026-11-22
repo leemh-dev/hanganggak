@@ -121,8 +121,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #ux-menu label[for=review-weather]{display:block;margin-top:10px}
 #review-weather{width:100%;min-height:40px;font:inherit}
 #open-report{width:100%;margin:6px 0}
-#ux-menu .support-pay{gap:2px;padding:9px 12px}
-#ux-menu .support-pay small{color:#ffe77a}
+#ux-menu .support-pay{padding:9px 12px}
 #game-report{box-sizing:border-box;width:min(390px,calc(100vw - 24px));max-height:84dvh;overflow:auto;padding:16px;border-radius:16px;border:1px solid #527174;background:#142e34;color:#f1f6f2}
 #game-report::backdrop{background:#061519a0}
 #game-report header{display:flex;align-items:center;justify-content:space-between}
@@ -309,9 +308,8 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  </details>
  <section class="sound-settings" aria-labelledby="sound-title"><h3 id="sound-title">소리</h3></section>
  <button type="button" id="open-report" aria-haspopup="dialog">개발개미한테 아이디어 제공하기</button>
- <a class="support-pay" href="https://litt.ly/hanganggak" target="_blank" rel="noopener noreferrer" aria-label="🐜 개발개미 물타기 도와주기 · 리틀리 후원 페이지 (새 창)">
+ <a class="support-pay" href="https://litt.ly/hanganggak" target="_blank" rel="noopener noreferrer" aria-label="🐜 개발개미 물타기 도와주기 (새 창)">
   <span>🐜 개발개미 물타기 도와주기</span>
-  <small>리틀리에서 후원하기 ↗</small>
  </a>
 </template>
 <dialog id="game-report" aria-labelledby="report-heading">
@@ -332,7 +330,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <h2 id="room-exit-title">한강각을 종료할까요?</h2>
  <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=8977f9b146a646054546d2c8fc561abf3598ab06').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=8977f9b146a646054546d2c8fc561abf3598ab06'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
+</main><script type="module">import('../stock-policy.js?v=8e748a8acd4158b5f427637e571be2daa7357cd3').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=8e748a8acd4158b5f427637e571be2daa7357cd3'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
  <header class="forum-head"><nav aria-label="글 종류"><button data-kind="board">게시판</button><button data-kind="notice">공지</button></nav><button class="forum-close" aria-label="한 단계 뒤로">×</button></header>
  <section class="forum-list">
   <div class="forum-tools"><div aria-label="정렬"><button data-sort="latest">최신글</button><button data-sort="popular">인기글</button></div><input type="search" aria-label="제목 또는 내용 검색" maxlength="120" placeholder="제목·내용 검색"></div>
