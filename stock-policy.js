@@ -4420,7 +4420,7 @@ function connectPlayRoom(origin, id, identity = null) {
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   const players = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
   let flights = [], rescue = null;
-  let population = null, clockOffset = 0;
+  let population = null, members = null, clockOffset = 0;
   function setPopulation(count) {
     if (count === population) return;
     population = count;
@@ -4432,6 +4432,7 @@ function connectPlayRoom(origin, id, identity = null) {
   }
   function reset() {
     self = null;
+    members = null;
     rescue = null;
     flights = [];
     setPopulation(null);
@@ -4502,6 +4503,7 @@ function connectPlayRoom(origin, id, identity = null) {
       if (m.type === "rescue-launch") rescue = m.boat;
       if (m.type === "notice-queue") flights = m.flights;
       if (m.type === "welcome") {
+        members = Array.isArray(m.members) ? new Set(m.members) : null;
         hasJoined = true;
         clearTimeout(deadline);
         connecting = null;
@@ -4513,7 +4515,11 @@ function connectPlayRoom(origin, id, identity = null) {
         receive(m.players);
         status();
       }
-      if (m.type === "population" && Number.isSafeInteger(m.count) && m.count > 0) setPopulation(m.count);
+      if (m.type === "population" && Number.isSafeInteger(m.count) && m.count > 0) {
+        if (m.joined) members?.add(m.joined);
+        if (m.departed) members?.delete(m.departed);
+        setPopulation(m.count);
+      }
       if (m.type === "players") receive(m.players);
       if (m.type === "leave") players.delete(m.id);
       if (m.type === "chat" && m.room === id) window.dispatchEvent(new CustomEvent("room-chat", { detail: m }));
@@ -4561,6 +4567,9 @@ function connectPlayRoom(origin, id, identity = null) {
     },
     get flights() {
       return flights;
+    },
+    get members() {
+      return members;
     },
     get population() {
       return population;
