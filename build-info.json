@@ -1,8 +1,8 @@
 {
-  "commit": "126ab24f17c909140392294616b430d9d35b06f6",
+  "commit": "b2976e2e42b49d21622319c50adb1d297bb9ccaf",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-22T02:56:58.642Z",
+  "builtAt": "2026-11-22T07:35:13.100Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {
@@ -189,6 +189,11 @@
       "path": "lounge/billboard-ko.otf",
       "bytes": 51716,
       "sha256": "1ec202f0d782e2450f6e86a2e92650435334256e104fab4b8fca179ac3fa8377"
+    },
+    {
+      "path": "idle-phone.glb",
+      "bytes": 4717756,
+      "sha256": "051d4d3bf3d9698bce18ead58780594bc82946b85e9271a96e33a67a0600a272"
     },
     {
       "path": "pungmul/chant.glb",
