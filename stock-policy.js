@@ -1,44 +1,3 @@
-// demo/beta-quality-completion/room-back.mjs
-function roomBack() {
-  const dialog = document.getElementById("room-exit"), menu = document.getElementById("ux-menu");
-  let leaving = false;
-  function guard() {
-    if (!history.state?.roomBack) history.pushState({ ...history.state, roomBack: true }, "", location.href);
-  }
-  guard();
-  window.addEventListener("popstate", () => {
-    if (leaving || history.state?.roomBack) return;
-    guard();
-    const modal = [...document.querySelectorAll("dialog[open]")].at(-1);
-    if (modal) {
-      modal.close();
-      return;
-    }
-    if (!menu.hidden) {
-      document.getElementById("ux-close").click();
-      return;
-    }
-    dialog.showModal();
-    dialog.querySelector('[value="cancel"]').focus({ preventScroll: true });
-  });
-  dialog.querySelector('[value="cancel"]').onclick = () => dialog.close();
-  dialog.querySelector('[value="exit"]').onclick = () => {
-    leaving = true;
-    sessionStorage.removeItem("map-entry");
-    location.replace(new URL("../", location.href));
-  };
-  window.addEventListener("pageshow", (e) => {
-    if (e.persisted && !sessionStorage.getItem("map-entry")) location.replace(new URL("../", location.href));
-  });
-}
-
-// demo/shared/nickname.mjs
-function nickname(value) {
-  if (typeof value !== "string") return null;
-  const name = value.normalize("NFKC").trim();
-  return !/\p{Default_Ignorable_Code_Point}/u.test(name) && /^[\p{L}\p{M}\p{N}_-]{1,16}$/u.test(name) ? name : null;
-}
-
 // demo/beta-quality-completion/quote-client.mjs
 var quoteOrigin = "https://hanganggak-realtime-demo.onrender.com";
 
@@ -77,6 +36,447 @@ async function guestToken(signal) {
     return memoryToken;
   }
   return navigator.locks ? navigator.locks.request("hanganggak-guest-save", { signal }, remember) : remember();
+}
+
+// demo/beta-quality-completion/forum.mjs
+function mountForum(room) {
+  const dialog = document.querySelector("#forum"), open = document.querySelector("#forum-open");
+  const $ = (selector) => dialog.querySelector(selector);
+  const list = $(".forum-list"), detail = $(".forum-detail"), compose = $(".forum-compose"), rows = $(".forum-rows");
+  const status = $(".forum-status"), search = $("[type=search]"), more = $(".forum-more");
+  const reply = $(".forum-reply"), input = reply.querySelector("textarea"), target = $(".reply-target");
+  let kind = "board", sort = "latest", view = "list", items = [], hasMore = false, post, replyTo, version = 0, timer;
+  let listTop = 0, pending = false, postRequest, commentRequest;
+  const gate = $(".forum-gate"), hiddenList = $(".forum-hidden");
+  let gateTask, noticeCode = "", hiddenCode = "", hiddenItems = [];
+  const date = new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  function element(tag, text, cls) {
+    const el = document.createElement(tag);
+    el.textContent = text;
+    if (cls) el.className = cls;
+    return el;
+  }
+  async function api(path = "", method = "GET", body, key, management = false) {
+    if (!management && !room.connected) throw Error("\uBC29\uC5D0 \uC5F0\uACB0\uB41C \uB4A4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694.");
+    const headers = management ? {} : { Authorization: "Bearer " + storedGuest(), "X-Player": room.self.id };
+    if (key) headers["X-Forum-Admin"] = key;
+    if (body) headers["Content-Type"] = "application/json";
+    const response = await fetch(quoteOrigin + (management ? "/forum/admin" : "/forum/posts") + path, { method, headers, body: body ? JSON.stringify(body) : void 0, cache: "no-store", signal: AbortSignal.timeout(15e3) });
+    const data = await response.json();
+    if (!response.ok) throw Error(data.error);
+    return data;
+  }
+  const admin = (path, method, body, key) => api(path, method, body, key, true);
+  function dismissGate() {
+    gate.reset();
+    gate.hidden = true;
+    gateTask = null;
+    for (const node of dialog.children) node.inert = false;
+  }
+  function askCode(heading, hint, button, task) {
+    if (pending) return;
+    gate.reset();
+    gateTask = task;
+    gate.querySelector("h2").textContent = heading;
+    gate.querySelector("p").textContent = hint;
+    gate.querySelector(".primary").textContent = button;
+    gate.querySelector("small").textContent = "";
+    for (const node of dialog.children) node.inert = node !== gate;
+    gate.hidden = false;
+    gate.elements.code.focus();
+  }
+  gate.onsubmit = async (e) => {
+    e.preventDefault();
+    if (pending || !gateTask) return;
+    pending = true;
+    gate.elements.code.readOnly = true;
+    try {
+      await gateTask(gate.elements.code.value);
+      dismissGate();
+      if (view === "compose") compose.elements.title.focus();
+    } catch (err) {
+      gate.querySelector("small").textContent = err.message;
+      gate.elements.code.select();
+    } finally {
+      pending = false;
+      gate.elements.code.readOnly = false;
+    }
+  };
+  $(".gate-x").onclick = $(".gate-cancel").onclick = () => {
+    if (!pending) dismissGate();
+  };
+  function show(next) {
+    if (next !== "compose") noticeCode = "";
+    if (next !== "hidden") {
+      hiddenCode = "";
+      hiddenItems = [];
+      $(".hidden-rows").replaceChildren();
+    }
+    hiddenList.hidden = next !== "hidden";
+    clearTimeout(timer);
+    version++;
+    view = next;
+    list.hidden = next !== "list";
+    detail.hidden = next !== "detail";
+    compose.hidden = next !== "compose";
+    status.textContent = "";
+    for (const btn of dialog.querySelectorAll("[data-kind]")) btn.setAttribute("aria-current", String(btn.dataset.kind === kind));
+  }
+  function renderList() {
+    rows.replaceChildren();
+    if (!items.length) rows.append(element("p", search.value ? "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : kind === "notice" ? "\uB4F1\uB85D\uB41C \uACF5\uC9C0\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4." : "\uCCAB \uAE00\uC744 \uB0A8\uACA8 \uBCF4\uC138\uC694."));
+    for (const item of items) {
+      const btn = element("button", "", "forum-row");
+      btn.append(element("strong", item.title), element("small", item.author + " \xB7 " + date.format(new Date(item.created_at)) + " \xB7 \uC88B\uC544\uC694 " + item.likes + " \xB7 \uB313\uAE00 " + item.comments));
+      btn.onclick = () => {
+        listTop = list.querySelector(".forum-scroll").scrollTop;
+        openPost(item.id);
+      };
+      rows.append(btn);
+    }
+    more.hidden = !hasMore;
+  }
+  async function fetchList(append = false) {
+    const current = ++version;
+    status.textContent = "\uBAA9\uB85D\uC744 \uBD88\uB7EC\uC624\uB294 \uC911\u2026";
+    more.disabled = true;
+    const params = new URLSearchParams({ kind, sort, q: search.value.trim(), offset: append ? items.length : 0 });
+    try {
+      const data = await api("?" + params);
+      if (current !== version) return;
+      items = append ? items.concat(data.items) : data.items;
+      hasMore = data.more;
+      renderList();
+      status.textContent = "";
+    } catch (e) {
+      if (current === version) {
+        status.textContent = e.message;
+        const retry = element("button", "\uB2E4\uC2DC \uC2DC\uB3C4");
+        retry.onclick = () => fetchList(append);
+        status.append(retry);
+      }
+    } finally {
+      if (current === version) more.disabled = false;
+    }
+  }
+  function startList() {
+    show("list");
+    items = [];
+    hasMore = false;
+    rows.replaceChildren();
+    more.hidden = true;
+    list.querySelector(".forum-scroll").scrollTop = 0;
+    $(".forum-tools>div").hidden = kind === "notice";
+    $(".forum-write").textContent = kind === "notice" ? "\u270E \uACF5\uC9C0 \uC791\uC131" : "\u270E \uAE00\uC4F0\uAE30";
+    for (const b of dialog.querySelectorAll("[data-sort]")) b.setAttribute("aria-pressed", String(b.dataset.sort === sort));
+    fetchList();
+  }
+  function setReply(comment) {
+    replyTo = comment;
+    target.hidden = !comment;
+    target.querySelector("span").textContent = comment ? comment.author + "\uB2D8\uC5D0\uAC8C \uB2F5\uAE00 \uC791\uC131 \uC911" : "";
+    input.placeholder = comment ? "\uB2F5\uAE00\uC744 \uB0A8\uACA8 \uC8FC\uC138\uC694" : "\uB313\uAE00\uC744 \uB0A8\uACA8 \uC8FC\uC138\uC694";
+    commentRequest = null;
+  }
+  function drawPost(data) {
+    post = data.post;
+    $(".post-management").open = false;
+    $("article h2").textContent = post.title;
+    $("article small").textContent = post.author + " \xB7 " + date.format(new Date(post.created_at));
+    $(".forum-body").textContent = post.body;
+    for (const b of dialog.querySelectorAll("[data-vote]")) {
+      const n = Number(b.dataset.vote);
+      b.textContent = n === 1 ? "\uC88B\uC544\uC694 " + post.likes : "\uC2EB\uC5B4\uC694 " + post.dislikes;
+      b.setAttribute("aria-pressed", String(post.mine === n));
+    }
+    $("h3").textContent = "\uB313\uAE00 " + post.comments;
+    const thread = $(".forum-comments");
+    thread.replaceChildren();
+    const children = /* @__PURE__ */ new Map();
+    for (const c of data.comments) {
+      if (!children.has(c.parent_id)) children.set(c.parent_id, []);
+      children.get(c.parent_id).push(c);
+    }
+    function add(c) {
+      const block = element("div", "", "comment" + (c.parent_id ? " nested" : ""));
+      block.append(element("small", c.author + " \xB7 " + date.format(new Date(c.created_at))), element("p", c.body));
+      if (!c.parent_id) {
+        const btn = element("button", "\uB300\uB313\uAE00 \uB0A8\uAE30\uAE30");
+        btn.onclick = () => {
+          if (!pending) {
+            setReply(c);
+            input.focus();
+          }
+        };
+        block.append(btn);
+      }
+      thread.append(block);
+    }
+    for (const c of children.get(null) ?? []) {
+      add(c);
+      for (const child of children.get(c.id) ?? []) add(child);
+    }
+  }
+  async function openPost(id) {
+    show("detail");
+    const current = version;
+    post = null;
+    input.value = "";
+    setReply(null);
+    detail.querySelector(".forum-scroll").hidden = true;
+    reply.hidden = true;
+    status.textContent = "\uAE00\uC744 \uBD88\uB7EC\uC624\uB294 \uC911\u2026";
+    try {
+      const data = await api("/" + id);
+      if (current !== version) return;
+      drawPost(data);
+      detail.querySelector(".forum-scroll").hidden = false;
+      detail.querySelector(".forum-scroll").scrollTop = 0;
+      reply.hidden = false;
+      status.textContent = "";
+    } catch (e) {
+      if (current === version) status.textContent = e.message;
+    }
+  }
+  function back() {
+    if (!dialog.open) return false;
+    if (pending) return true;
+    if (!gate.hidden) {
+      dismissGate();
+      return true;
+    }
+    if (view === "detail" && replyTo) {
+      if (input.value.trim() && !confirm("\uC791\uC131 \uC911\uC778 \uB2F5\uAE00\uC744 \uC9C0\uC6B8\uAE4C\uC694?")) return true;
+      input.value = "";
+      setReply(null);
+      input.focus();
+      return true;
+    }
+    if (view === "compose" && (compose.elements.title.value || compose.elements.body.value) || view === "detail" && input.value.trim()) {
+      if (!confirm("\uC791\uC131 \uC911\uC778 \uB0B4\uC6A9\uC744 \uC9C0\uC6B0\uACE0 \uB3CC\uC544\uAC08\uAE4C\uC694?")) return true;
+    }
+    if (view === "list") {
+      dialog.close();
+      return true;
+    }
+    if (view === "hidden") {
+      startList();
+      return true;
+    }
+    compose.reset();
+    show("list");
+    renderList();
+    more.disabled = false;
+    list.querySelector(".forum-scroll").scrollTop = listTop;
+    return true;
+  }
+  async function write(action) {
+    if (pending) return;
+    pending = true;
+    dialog.setAttribute("aria-busy", "true");
+    status.textContent = "\uC800\uC7A5 \uC911\u2026";
+    for (const field of dialog.querySelectorAll("input,textarea")) field.readOnly = true;
+    try {
+      await action();
+    } catch (e) {
+      status.textContent = e.message;
+    } finally {
+      pending = false;
+      dialog.removeAttribute("aria-busy");
+      for (const field of dialog.querySelectorAll("input,textarea")) field.readOnly = false;
+    }
+  }
+  open.onclick = () => {
+    dialog.showModal();
+    kind = "board";
+    sort = "latest";
+    search.value = "";
+    startList();
+  };
+  dialog.onclose = () => {
+    dismissGate();
+    noticeCode = "";
+    hiddenCode = "";
+    hiddenItems = [];
+    $(".hidden-rows").replaceChildren();
+    clearTimeout(timer);
+    version++;
+    document.querySelector("#scene").focus({ preventScroll: true });
+  };
+  $(".forum-close").onclick = back;
+  dialog.oncancel = (e) => {
+    e.preventDefault();
+    back();
+  };
+  dialog.addEventListener("keydown", (e) => e.stopPropagation());
+  dialog.addEventListener("keyup", (e) => e.stopPropagation());
+  for (const b of dialog.querySelectorAll("[data-kind]")) b.onclick = () => {
+    if (pending || b.dataset.kind === kind) return;
+    if (view === "compose" && (compose.elements.title.value || compose.elements.body.value) || input.value.trim()) {
+      if (!confirm("\uC791\uC131 \uC911\uC778 \uB0B4\uC6A9\uC744 \uC9C0\uC6B0\uACE0 \uC774\uB3D9\uD560\uAE4C\uC694?")) return;
+    }
+    compose.reset();
+    input.value = "";
+    setReply(null);
+    kind = b.dataset.kind;
+    sort = "latest";
+    search.value = "";
+    startList();
+  };
+  for (const b of dialog.querySelectorAll("[data-sort]")) b.onclick = () => {
+    sort = b.dataset.sort;
+    startList();
+  };
+  search.oninput = () => {
+    clearTimeout(timer);
+    version++;
+    items = [];
+    rows.replaceChildren();
+    more.hidden = true;
+    timer = setTimeout(() => fetchList(), 180);
+  };
+  more.onclick = () => fetchList(true);
+  function composePost(key = "") {
+    listTop = list.querySelector(".forum-scroll").scrollTop;
+    show("compose");
+    compose.reset();
+    noticeCode = key;
+    compose.querySelector("h2").textContent = kind === "notice" ? "\uACF5\uC9C0 \uC791\uC131" : "\uAE00\uC4F0\uAE30";
+    postRequest = crypto.randomUUID();
+    compose.elements.title.focus();
+  }
+  $(".forum-write").onclick = () => {
+    if (kind === "notice") askCode("\uACF5\uC9C0 \uC791\uC131", "", "\uC791\uC131\uD558\uAE30", async (key) => {
+      await admin("/verify", "POST", null, key);
+      composePost(key);
+    });
+    else composePost();
+  };
+  compose.onsubmit = (e) => {
+    e.preventDefault();
+    write(async () => {
+      const title = compose.elements.title.value.trim(), body = compose.elements.body.value.trim();
+      const data = { id: postRequest, kind, title, body };
+      const result = kind === "notice" ? await admin("/notices", "POST", data, noticeCode) : await api("", "POST", data);
+      compose.reset();
+      await fetchList();
+      await openPost(result.id);
+    });
+  };
+  target.querySelector("button").onclick = back;
+  reply.onsubmit = (e) => {
+    e.preventDefault();
+    if (!post || !input.value.trim()) return;
+    write(async () => {
+      commentRequest ??= crypto.randomUUID();
+      await api("/" + post.id + "/comments", "POST", { id: commentRequest, parent: replyTo?.id ?? null, body: input.value.trim() });
+      input.value = "";
+      setReply(null);
+      drawPost(await api("/" + post.id));
+      syncRow();
+      status.textContent = "";
+      input.focus();
+    });
+  };
+  input.oninput = () => {
+    commentRequest = null;
+  };
+  function syncRow() {
+    const row = items.find((x) => x.id === post.id);
+    if (row) Object.assign(row, { likes: post.likes, comments: post.comments });
+  }
+  for (const b of dialog.querySelectorAll("[data-vote]")) b.onclick = () => {
+    if (!post) return;
+    write(async () => {
+      const n = Number(b.dataset.vote);
+      await api("/" + post.id + "/vote", "PUT", { value: post.mine === n ? 0 : n });
+      drawPost(await api("/" + post.id));
+      syncRow();
+      status.textContent = "";
+    });
+  };
+  async function hiddenPage(key, append = false) {
+    const page = await admin("/posts?scope=hidden&offset=" + (append ? hiddenItems.length : 0), "GET", null, key);
+    show("hidden");
+    hiddenCode = key;
+    hiddenItems = append ? [...hiddenItems, ...page.items] : page.items;
+    const container = $(".hidden-rows");
+    container.replaceChildren();
+    if (!hiddenItems.length) container.textContent = "\uC228\uAE34 \uAE00\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.";
+    for (const item of hiddenItems) {
+      const row = element("div", "", "hidden-row");
+      row.append(element("strong", item.title), element("small", item.author));
+      for (const action of ["restore", "delete"]) {
+        const btn = element("button", action === "restore" ? "\uBCF5\uAD6C" : "\uC0AD\uC81C");
+        btn.onclick = () => moderate(item, action);
+        row.append(btn);
+      }
+      container.append(row);
+    }
+    $(".hidden-more").hidden = !page.more;
+  }
+  function moderate(item, action) {
+    const removing = action === "delete", hidden = view === "hidden";
+    const label = removing ? "\uC0AD\uC81C" : action === "hide" ? "\uC228\uAE30\uAE30" : "\uBCF5\uAD6C";
+    const hint = removing ? "\uC0AD\uC81C\uD558\uBA74 \uB313\uAE00\uACFC \uCD94\uCC9C\uB3C4 \uD568\uAED8 \uC0AD\uC81C\uB418\uBA70 \uBCF5\uAD6C\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4." : "";
+    askCode("\u300C" + item.title + "\u300D " + label, hint, label, async (key) => {
+      await admin("/posts/" + item.id, removing ? "DELETE" : "PATCH", removing ? null : { hidden: action === "hide" }, key);
+      if (hidden) await hiddenPage(key);
+      else {
+        input.value = "";
+        setReply(null);
+        startList();
+      }
+    });
+  }
+  $(".forum-hidden-open").onclick = () => askCode("\uC228\uAE34 \uAE00 \uAD00\uB9AC", "", "\uBAA9\uB85D \uBCF4\uAE30", (key) => hiddenPage(key));
+  $(".hidden-more").onclick = () => write(() => hiddenPage(hiddenCode, true));
+  for (const btn of dialog.querySelectorAll("[data-moderate]")) btn.onclick = () => {
+    if (post) moderate(post, btn.dataset.moderate);
+  };
+  return back;
+}
+
+// demo/beta-quality-completion/room-back.mjs
+function roomBack(backFromForum) {
+  const dialog = document.getElementById("room-exit"), menu = document.getElementById("ux-menu");
+  let leaving = false;
+  function guard() {
+    if (!history.state?.roomBack) history.pushState({ ...history.state, roomBack: true }, "", location.href);
+  }
+  guard();
+  window.addEventListener("popstate", () => {
+    if (leaving || history.state?.roomBack) return;
+    guard();
+    if (backFromForum?.()) return;
+    const modal = [...document.querySelectorAll("dialog[open]")].at(-1);
+    if (modal) {
+      modal.close();
+      return;
+    }
+    if (!menu.hidden) {
+      document.getElementById("ux-close").click();
+      return;
+    }
+    dialog.showModal();
+    dialog.querySelector('[value="cancel"]').focus({ preventScroll: true });
+  });
+  dialog.querySelector('[value="cancel"]').onclick = () => dialog.close();
+  dialog.querySelector('[value="exit"]').onclick = () => {
+    leaving = true;
+    sessionStorage.removeItem("map-entry");
+    location.replace(new URL("../", location.href));
+  };
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted && !sessionStorage.getItem("map-entry")) location.replace(new URL("../", location.href));
+  });
+}
+
+// demo/shared/nickname.mjs
+function nickname(value) {
+  if (typeof value !== "string") return null;
+  const name = value.normalize("NFKC").trim();
+  return !/\p{Default_Ignorable_Code_Point}/u.test(name) && /^[\p{L}\p{M}\p{N}_-]{1,16}$/u.test(name) ? name : null;
 }
 
 // demo/shared/stock-catalog.json
@@ -4320,8 +4720,8 @@ async function ensureStockRoute() {
     return false;
   }
   const name = map === "river" ? "\uD55C\uAC15\uACF5\uC6D0" : "\uB8E8\uD504\uD0D1 \uB77C\uC6B4\uC9C0";
-  roomBack();
   const room = connectPlayRoom(quoteOrigin, map, { name: playerName, guestToken });
+  roomBack(mountForum(room));
   window.hanganggakCommunity = room;
   async function report(path, body) {
     const res = await fetch(quoteOrigin + "/reports/" + path, { method: body ? "POST" : "GET", headers: body ? { "Content-Type": "application/json" } : {}, body: body ? JSON.stringify(body) : void 0 });

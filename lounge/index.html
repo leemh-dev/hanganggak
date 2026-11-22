@@ -175,6 +175,69 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
 #review-emotes button[data-instrument]{font-size:19px;line-height:1.2}
 #review-emotes button[data-instrument] small{display:block;font:10px system-ui}
 #review-emotes [aria-pressed=true]{border-color:#e5c573;background:#385744}
+</style><style>#forum-open{pointer-events:auto;width:46px;height:46px;border-radius:12px;background:#142d32ed;color:white;border:1px solid #ffffff32;font-size:24px;cursor:pointer;line-height:1}
+#forum{color-scheme:dark;color:#f1f6f2;background:#142d32;border:1px solid #526b70;border-radius:20px;padding:0;width:min(850px,calc(100vw - 20px));height:min(880px,calc(100dvh - max(26px,env(safe-area-inset-top)) - max(12px,env(safe-area-inset-bottom))));max-height:none;max-width:none;box-sizing:border-box;box-shadow:0 18px 80px #0008;font:16px/1.5 system-ui,sans-serif;overflow:hidden}
+#forum[open],#forum section,#forum .forum-compose{display:flex;flex-direction:column;min-height:0}
+#forum section,#forum .forum-compose{flex:1}
+#forum [hidden]{display:none!important}
+#forum::backdrop{background:#07151bd6}
+#forum *{box-sizing:border-box}
+#forum button,#forum input,#forum textarea{font:inherit;color:inherit}
+#forum button{min-height:44px;padding:7px 14px;border:1px solid transparent;background:transparent;cursor:pointer;border-radius:9px}
+#forum :focus-visible,#forum-open:focus-visible{outline:2px solid #ffdf89;outline-offset:-2px}
+#forum input,#forum textarea{width:100%;padding:10px 12px;border:1px solid #49686b;border-radius:9px;background:#0e2428}
+#forum textarea{resize:vertical}
+#forum .forum-head,#forum .forum-tools,#forum footer,#forum .reply-fields,#forum .reply-target{display:flex;align-items:center;gap:8px}
+#forum .forum-head{justify-content:space-between;padding:10px 18px 0;border-bottom:1px solid #446066}
+#forum .forum-head nav button{font-weight:650;font-size:18px;color:#b5c6c7;border-radius:0;padding:9px 15px 12px}
+#forum .forum-head [aria-current=true]{color:white;border-bottom:3px solid #a4e2c5}
+#forum .forum-close{font-size:28px}
+#forum .forum-tools{padding:12px 18px;justify-content:space-between}
+#forum .forum-tools>div{display:flex;flex-shrink:0}
+#forum .forum-tools input{max-width:320px;min-width:0}
+#forum [aria-pressed=true]{background:#335950;border-color:#76ac97}
+#forum .forum-scroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 18px}
+#forum .forum-row{width:100%;text-align:left;display:grid;gap:3px;border-bottom:1px solid #375055;border-radius:0;padding:13px 4px}
+#forum .forum-row:hover{background:#203b40}
+#forum small{color:#c1cfce;font-size:13px}
+#forum .forum-row strong,#forum article,#forum .comment,#forum .reply-target{overflow-wrap:anywhere}
+#forum footer{justify-content:flex-end;border-top:1px solid #375055;padding:10px 18px}
+#forum .primary{background:#b0e8ce;color:#14352b;font-weight:700;padding-inline:22px}
+#forum h2{font-size:22px;line-height:1.3;margin:18px 0 4px}
+#forum h3{font-size:16px;margin:16px 0 4px}
+#forum .forum-body,#forum .comment p{white-space:pre-wrap;overflow-wrap:anywhere}
+#forum .forum-votes{display:flex;gap:8px;margin:24px 0;border-bottom:1px solid #375055;padding-bottom:16px}
+#forum .forum-votes button{border-color:#587478}
+#forum .comment{padding:8px 0;border-bottom:1px solid #31494d}
+#forum .comment p{margin:3px 0}
+#forum .comment button{padding:2px 8px;color:#b0e8ce;font-size:13px}
+#forum .nested{margin-left:16px;border-left:2px solid #587478;padding-left:12px}
+#forum .forum-reply{border-top:1px solid #405d60;padding:10px 18px}
+#forum .reply-fields textarea{min-height:44px;max-height:120px}
+#forum .reply-fields button{flex-shrink:0}
+#forum .reply-target{justify-content:space-between;color:#b0e8ce}
+#forum .forum-compose{padding:0 18px;gap:12px;overflow:auto}
+#forum .forum-compose label{display:grid;gap:5px}
+#forum .compose-body{flex:1;grid-template-rows:auto 1fr}
+#forum .compose-body textarea{min-height:100px}
+#forum .forum-compose footer{padding-inline:0}
+#forum .forum-status:not(:empty){margin:0;background:#234148;padding:8px 18px}
+#forum .forum-status:empty{display:none}
+@media(max-width:480px){#forum .forum-tools{gap:4px;padding:8px}#forum .forum-tools button{padding-inline:9px}#forum .forum-scroll{padding-inline:12px}#forum .forum-reply{padding:8px}#forum .forum-head{padding:4px 8px 0}}
+#forum .forum-hidden-open{margin-right:auto;color:#bbcdca;font-size:14px}
+#forum .post-management{margin-bottom:16px;color:#c0d0cc}
+#forum .post-management summary{cursor:pointer;width:fit-content;padding:8px 0}
+#forum .forum-hidden h2{padding-inline:18px}
+#forum .hidden-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 0;border-bottom:1px solid #385659}
+#forum .hidden-row strong{flex:1;min-width:6em;overflow-wrap:anywhere}
+#forum .forum-gate{position:absolute;inset:0;z-index:2;display:grid;align-content:center;gap:12px;padding:clamp(18px,6vw,60px);background:#142d32;overflow:auto}
+#forum .forum-gate h2{overflow-wrap:anywhere}
+#forum .forum-gate p{margin:0}
+#forum .forum-gate p:empty{display:none}
+#forum .forum-gate label{display:grid;gap:6px}
+#forum .forum-gate .primary{margin-left:8px}
+
+#forum .gate-x{position:absolute;top:8px;right:10px;font-size:26px}
 </style></head><body>
 <main id="game">
  <div id="scene" tabindex="0" aria-label="라운지 3D 화면. 바닥·수면 클릭 또는 탭 이동, 드래그 시점, 휠 또는 핀치 줌"><div id="loading" role="status">라운지를 불러오고 있어요…</div><div id="labels"></div><span id="touch-camera">탭 이동 · 드래그 시점 · 핀치 줌</span></div>
@@ -190,7 +253,7 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <section id="welcome" class="panel" aria-label="라운지 입장 안내"><span class="eyebrow">HANGANGGAK · DEMO</span><h1>어느 종목에서 만날까요?</h1><p>상승은 루프탑, 하락은 한강.<br>같은 종목을 선택한 사람들과 만나고 대화하세요.</p><div id="stock-picker"><label for="stock-search">종목명 또는 종목코드</label><div class="stock-search-row"><input id="stock-search" type="search" role="combobox" aria-autocomplete="list" aria-controls="stock-results" aria-expanded="true" aria-describedby="stock-data-note" placeholder="예: 삼, 삼성 전자, 005930" autocomplete="off" maxlength="60"><button id="clear-stock-search" type="button" aria-label="검색어 지우기">지우기</button></div><label for="stock-sort" class="sort-label">정렬</label><select id="stock-sort"><option value="cap">시가총액 내림차순</option><option value="name">종목명순</option><option value="code">종목코드순</option></select><small id="stock-data-note"></small> <a id="stock-data-source" target="_blank" rel="noopener noreferrer">시총 출처</a><span id="stock-result-count" class="sr-only" role="status" aria-live="polite"></span><ul id="stock-results" role="listbox" aria-label="검색 결과"></ul><p id="stock-empty" hidden>검색 결과가 없습니다. 다른 이름이나 코드를 입력해 주세요.</p><p id="stock-selection" role="status" aria-live="polite"></p></div><p id="demo-disclaimer" class="muted">입장 후 웹에서 수집한 현재가를 표시합니다.<br>시총 정렬은 고정 스냅샷이며, 시세는 지연될 수 있습니다.<br>입장 버튼을 누르면 임시 ID와 닉네임이 발급됩니다.</p><p id="entry-status" role="status" aria-live="polite">종목을 선택해 주세요.</p><p>PC: 바닥 클릭 이동 · 마우스 드래그 시점 · 휠 줌<br>휴대폰: 바닥·수면 탭 이동 · 한 손가락 드래그 시점 · 핀치 줌<br>사다리·다이빙대 직접 선택 · 다이빙대 도착 후 수면 선택</p><p class="muted">세로·가로 화면 모두 이용할 수 있습니다.<br>전체 화면은 버튼으로 언제든 전환할 수 있어요.</p><button id="enter" disabled>불러오는 중…</button></section>
  <section id="guide" class="panel" aria-label="조작 도움말" hidden><h2>공간 둘러보기</h2><p>바닥이나 수면을 클릭하면 그곳으로 이동합니다.<br>마우스 드래그로 시점 · 휠로 거리 조절<br>WASD / 방향키도 보조 조작으로 사용할 수 있습니다.<br>휴대폰은 바닥·수면 탭 이동 · 한 손가락 드래그 / 핀치 줌</p><p>한강: 경사로로 공원과 물을 오갈 수 있습니다.<br>사다리를 클릭·탭하면 자동으로 접근해 올라가거나 내려갑니다.<br>다이빙대를 선택해 도착한 뒤 수면을 누르면 그 방향으로 다이빙합니다.<br>PC는 마우스를 올리면, 휴대폰은 가까이 가면 흰 테두리와 문구가 보입니다.</p><p>↺ 버튼은 시점만 초기화합니다.<br>전체 화면 버튼으로 다시 입장하거나 종료할 수 있습니다.<br>PC는 Esc로 전체 화면을 종료할 수 있습니다.</p><p>시점은 좌우로 360도 돌릴 수 있습니다.<br>난간과 가구 주변에서는 카메라가 가까워집니다.</p><small id="position">위치 —</small><button id="close-help">계속 둘러보기</button></section>
 <div id="ux-stick" aria-label="이동 조이스틱"><span></span></div>
-<header id="ux-bar"><span id="ux-room-count" role="status" hidden>인원 확인 중</span><button type="button" id="ux-map-name" aria-haspopup="dialog" aria-controls="ux-stock-picker"><span id="ux-stock-name">한강각</span> <span id="ux-stock-change"></span><span aria-hidden="true">⌄</span></button><button id="ux-menu-toggle" aria-label="게임 설정 열기" aria-controls="ux-menu" aria-expanded="false">☰</button></header>
+<header id="ux-bar"><span id="ux-room-count" role="status" hidden>인원 확인 중</span><button type="button" id="ux-map-name" aria-haspopup="dialog" aria-controls="ux-stock-picker"><span id="ux-stock-name">한강각</span> <span id="ux-stock-change"></span><span aria-hidden="true">⌄</span></button><button id="forum-open" type="button" aria-label="게시판 열기" aria-haspopup="dialog" aria-controls="forum">▤</button><button id="ux-menu-toggle" aria-label="게임 설정 열기" aria-controls="ux-menu" aria-expanded="false">☰</button></header>
 <section id="ux-entry" role="dialog" aria-modal="true" aria-labelledby="ux-entry-title"><div class="ux-card"><h1 id="ux-entry-title">잠시만 기다려 주세요</h1><p id="ux-entry-note">공간을 불러오고 있어요.</p><button id="ux-enter" disabled>불러오는 중…</button><a href="../">입장 화면으로</a></div></section>
 <div id="ux-menu-shade" hidden></div>
 <section id="ux-menu" role="dialog" aria-modal="true" aria-labelledby="ux-menu-title" hidden>
@@ -263,7 +326,24 @@ a.stock-row{color:inherit;min-height:44px;text-decoration:none;box-sizing:border
  <h2 id="room-exit-title">한강각을 종료할까요?</h2>
  <div><button type="button" value="cancel" autofocus>취소</button><button type="button" value="exit">확인</button></div>
 </dialog>
-</main><script type="module">import('../stock-policy.js?v=b2976e2e42b49d21622319c50adb1d297bb9ccaf').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=b2976e2e42b49d21622319c50adb1d297bb9ccaf'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script></body></html>
+</main><script type="module">import('../stock-policy.js?v=cab294ed8614956ac11fe87a8e1bd0140c70cb1a').then(async m=>(await m.ensureStockRoute())?import('./app.js?v=cab294ed8614956ac11fe87a8e1bd0140c70cb1a'):undefined).catch(()=>{const el=document.getElementById('loading');if(el && el.textContent.includes('불러오고'))el.textContent='실행 파일을 불러오지 못했습니다. 새로고침해 주세요.';});</script><dialog id="forum" aria-label="커뮤니티 게시판">
+ <header class="forum-head"><nav aria-label="글 종류"><button data-kind="board">게시판</button><button data-kind="notice">공지</button></nav><button class="forum-close" aria-label="한 단계 뒤로">×</button></header>
+ <section class="forum-list">
+  <div class="forum-tools"><div aria-label="정렬"><button data-sort="latest">최신글</button><button data-sort="popular">인기글</button></div><input type="search" aria-label="제목 또는 내용 검색" maxlength="120" placeholder="제목·내용 검색"></div>
+  <div class="forum-scroll" tabindex="-1"><div class="forum-rows"></div><button class="forum-more" hidden>더 보기</button></div>
+  <footer><button class="forum-hidden-open">숨긴 글 관리</button><button class="forum-write primary">✎ 글쓰기</button></footer>
+ </section>
+ <section class="forum-detail" hidden>
+  <div class="forum-scroll"><article><h2></h2><small></small><p class="forum-body"></p><div class="forum-votes"><button data-vote="1"></button><button data-vote="-1"></button></div><details class="post-management"><summary>글 관리</summary><button data-moderate="hide">숨기기</button><button data-moderate="delete">삭제</button></details></article>
+  <h3>댓글</h3><div class="forum-comments"></div></div>
+  <form class="forum-reply"><div class="reply-target" hidden><span></span><button type="button" aria-label="답글 대상 취소">×</button></div><div class="reply-fields"><textarea required maxlength="800" rows="1" aria-label="댓글 내용" placeholder="댓글을 남겨 주세요"></textarea><button class="primary">등록</button></div></form>
+ </section>
+ <form class="forum-compose" hidden><h2>글쓰기</h2><label>제목<input name="title" required maxlength="100"></label><label class="compose-body">내용<textarea name="body" required maxlength="6000"></textarea></label><footer><button class="primary">등록</button></footer></form>
+ <section class="forum-hidden" hidden><h2>숨긴 글</h2><div class="forum-scroll"><div class="hidden-rows"></div><button class="hidden-more" hidden>더 보기</button></div></section>
+ <form class="forum-gate" hidden><button type="button" class="gate-x" aria-label="뒤로">×</button><h2></h2><p></p><label>운영 코드<input type="password" name="code" required maxlength="256" autocomplete="off"></label><div><button type="button" class="gate-cancel">취소</button><button class="primary">확인</button></div><small role="alert"></small></form>
+ <p class="forum-status" role="status"></p>
+</dialog>
+</body></html>
 
 
 
