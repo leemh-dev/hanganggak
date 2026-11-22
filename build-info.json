@@ -1,8 +1,8 @@
 {
-  "commit": "65fe9de44947a6d935f87e6ae1b16b4a2aabec43",
+  "commit": "21ea9ae20056f79b2304c29544531d2b97e44579",
   "roomMode": "maps",
   "usMode": "off",
-  "builtAt": "2026-11-22T21:57:30.511Z",
+  "builtAt": "2026-11-22T22:23:48.445Z",
   "kind": "shared map rooms with public market quote API",
   "files": [
     {
@@ -68,7 +68,7 @@
     {
       "path": "river/policy.json",
       "bytes": 778,
-      "sha256": "6971ca34f695ae68c14108441186d6fa2fa7b8a703a2c1404368d57d9919a388"
+      "sha256": "a12e737a009d53d796aab84353a5867f92631e8c5b2dac0ef43c677844611573"
     },
     {
       "path": "river/river-world.json",
@@ -78,7 +78,7 @@
     {
       "path": "river/river-policy.json",
       "bytes": 778,
-      "sha256": "6971ca34f695ae68c14108441186d6fa2fa7b8a703a2c1404368d57d9919a388"
+      "sha256": "a12e737a009d53d796aab84353a5867f92631e8c5b2dac0ef43c677844611573"
     },
     {
       "path": "river/river.glb",
@@ -157,8 +157,8 @@
     },
     {
       "path": "lounge/policy.json",
-      "bytes": 732,
-      "sha256": "7337bf5ba8d250c7767c75255146b084a8600c426c30c6e6e0f1884b68a75b5f"
+      "bytes": 768,
+      "sha256": "96f7b8361710b3c42f5e8fa61add0588022edcaebcd2a66d381e94cddbb8d5eb"
     },
     {
       "path": "lounge/river-world.json",
@@ -168,7 +168,7 @@
     {
       "path": "lounge/river-policy.json",
       "bytes": 778,
-      "sha256": "6971ca34f695ae68c14108441186d6fa2fa7b8a703a2c1404368d57d9919a388"
+      "sha256": "a12e737a009d53d796aab84353a5867f92631e8c5b2dac0ef43c677844611573"
     },
     {
       "path": "lounge/lounge.glb",
