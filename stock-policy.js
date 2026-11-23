@@ -4479,11 +4479,16 @@ function connectPlayRoom(origin, id, identity = null) {
       return;
     }
     if (identity) ws.onopen = () => {
-      if (socket === ws) ws.send(JSON.stringify({ type: "entry", name: identity.name, token, resume: hasJoined }));
+      if (socket === ws) ws.send(JSON.stringify({ type: "entry", name: identity.name, token, resume: hasJoined, followMarket: !!identity.transfer }));
     };
     ws.onmessage = (event) => {
       if (socket !== ws) return;
       const m = JSON.parse(event.data);
+      if (identity?.transfer && m.type === "map-transfer" && ["river", "lounge"].includes(m.map) && m.map !== id) {
+        suspend();
+        identity.transfer(m);
+        return;
+      }
       if (identity && m.type === "nickname-invalid") {
         suspend();
         const entry = new URL("../", location.href);
@@ -4706,19 +4711,51 @@ function requestPicker(room) {
   window.addEventListener("room-chat-status", draw);
 }
 async function ensureStockRoute() {
-  const map = location.pathname.split("/").filter(Boolean).at(-1);
+  if (/\/(river|lounge)\/?$/.test(location.pathname)) {
+    location.replace(new URL("../play/" + location.search + location.hash, location.href));
+    return false;
+  }
   let user;
   try {
     user = JSON.parse(sessionStorage.getItem("map-entry"));
   } catch {
   }
   const playerName = nickname(user?.name);
-  if (!playerName || user.map !== map || !["river", "lounge"].includes(map)) {
-    location.replace(user?.name && !playerName ? "../?nickname=invalid" : "../");
+  if (!playerName) {
+    location.replace(user?.name ? "../?nickname=invalid" : "../");
     return false;
   }
+  let route;
+  try {
+    const response = await fetch(quoteOrigin + "/maps/entry", { cache: "no-store", signal: AbortSignal.timeout(45e3) });
+    if (!response.ok) throw Error();
+    route = await response.json();
+    if (!["river", "lounge"].includes(route.map)) throw Error();
+  } catch {
+    const note = document.querySelector("#ux-entry-note"), retry = document.querySelector("#ux-enter");
+    document.querySelector("#ux-entry-title").textContent = "\uC785\uC7A5\uD560 \uACF5\uAC04\uC744 \uD655\uC778 \uC911\uC774\uC5D0\uC694";
+    note.textContent = "\uC2DC\uC138 \uC11C\uBC84\uC5D0 \uC5F0\uACB0\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC7A0\uC2DC \uD6C4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694.";
+    retry.disabled = false;
+    retry.textContent = "\uB2E4\uC2DC \uC2DC\uB3C4";
+    retry.onclick = () => location.reload();
+    return false;
+  }
+  const { map, change } = route;
+  const base = document.createElement("base");
+  base.href = new URL("../" + map + "/", location.href);
+  document.head.prepend(base);
   const name = map === "river" ? "\uD55C\uAC15\uACF5\uC6D0" : "\uB8E8\uD504\uD0D1 \uB77C\uC6B4\uC9C0";
-  const room = connectPlayRoom(quoteOrigin, map, { name: playerName, guestToken });
+  function transfer(target) {
+    const dialog = document.createElement("dialog");
+    dialog.className = "map-transfer";
+    dialog.setAttribute("aria-label", "\uACF5\uAC04 \uC774\uB3D9");
+    dialog.textContent = target.map === "river" ? "\uCF54\uC2A4\uD53C\uAC00 \uD558\uB77D\uD574 \uD55C\uAC15\uACF5\uC6D0\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4." : target.change === 0 ? "\uCF54\uC2A4\uD53C\uAC00 \uBCF4\uD569\uC73C\uB85C \uB3CC\uC544\uC640 \uB8E8\uD504\uD0D1\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4." : "\uCF54\uC2A4\uD53C\uAC00 \uC0C1\uC2B9\uD574 \uB8E8\uD504\uD0D1\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4.";
+    dialog.addEventListener("cancel", (e) => e.preventDefault());
+    document.body.append(dialog);
+    dialog.showModal();
+    setTimeout(() => location.reload(), 1500);
+  }
+  const room = connectPlayRoom(quoteOrigin, map, { name: playerName, guestToken, transfer });
   roomBack(mountForum(room));
   window.hanganggakCommunity = room;
   async function report(path, body) {
@@ -4730,12 +4767,12 @@ async function ensureStockRoute() {
   room.reportStatus = () => report("status");
   room.reportCode = (email, text) => report("code", { email, text, room: map });
   room.reportSubmit = (id, code) => report("submit", { id, code });
-  window.hanganggakEntryStock = { id: map, name, map: map === "river" ? "river" : "rooftop", change: Number.isFinite(user.indexChange) ? user.indexChange : null, quote: { mode: "live" } };
+  window.hanganggakEntryStock = { id: map, name, map: map === "river" ? "river" : "rooftop", change, quote: { mode: "live" } };
   requestPicker(room);
   window.addEventListener("map-board", (e) => {
     window.mapBoard = e.detail;
   });
-  return true;
+  return map;
 }
 export {
   ensureStockRoute
